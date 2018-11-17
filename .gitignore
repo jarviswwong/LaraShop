@@ -8,6 +8,9 @@
 /storage/*.key
 /vendor
 /.idea
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
 /.vagrant
 Homestead.json
 Homestead.yaml

@@ -20,10 +20,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/email_verification/send', 'EmailVerificationController@send')->name('email_verification.send');
 
     Route::group(['middleware' => 'email_verified'], function () {
-        // If email is verified
+        // UserAddresses Routers
         Route::get('/user_addresses', 'UserAddressesController@index')->name('user_addresses.index');
         Route::get('/user_addresses/create', 'UserAddressesController@create')->name('user_addresses.create');
+        Route::get('/user_addresses/edit/{userAddress}', 'UserAddressesController@edit')->name('user_addresses.edit');
         Route::post('user_addresses', 'UserAddressesController@store')->name('user_addresses.store');
-
+        Route::put('/user_addresses/update/{userAddress}', 'UserAddressesController@update')->name('user_addresses.update');
+        Route::delete('/user_addresses/destroy/{userAddress}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
     });
 });

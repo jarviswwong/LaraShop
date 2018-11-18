@@ -28,8 +28,16 @@
                                 <td>{{ $address->zip }}</td>
                                 <td>{{ $address->contact_phone }}</td>
                                 <td>
-                                    <button class="btn btn-primary">修改</button>
-                                    <button class="btn btn-danger">删除</button>
+                                    <a href="{{ route('user_addresses.edit', ['userAddress' => $address->id]) }}"
+                                       class="btn btn-primary">修改</a>
+                                    {{--<form action="{{route('user_addresses.destroy', ['userAddress' => $address->id])}}"--}}
+                                    {{--method="POST" style="display: inline-block;">--}}
+                                    {{--{{csrf_field()}}--}}
+                                    {{--{{method_field('DELETE')}}--}}
+                                    {{--<button class="btn btn-danger" tyle="submit">删除</button>--}}
+                                    {{--</form>--}}
+                                    <button class="btn btn-danger btn-delete-address" data-id="{{$address->id}}">删除
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -39,4 +47,42 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scriptsAfterJs')
+    <script>
+        $(document).ready(function () {
+            $('.btn-delete-address').on('click', function () {
+                var id = $(this).data('id');
+                var that = this;
+
+                swal({
+                    title: "确认删除该地址？",
+                    icon: "warning",
+                    buttons: ['取消', '确定'],
+                    dangerMode: true,
+                }).then(function (willDelete) {
+                    if (willDelete) {
+                        axios.delete('/user_addresses/destroy/' + id)
+                            .then((res) => {
+                                if (parseInt(res.data.status, 10) === 1) {
+                                    swal(res.data.msg, {
+                                        icon: "success",
+                                    });
+                                    $(that).parents('tr').remove();
+                                }
+                                else {
+                                    swal(res.data.msg, {
+                                        icon: "error",
+                                    });
+                                }
+                            })
+                    }
+                    else {
+                        return;
+                    }
+                })
+            })
+        })
+    </script>
 @endsection

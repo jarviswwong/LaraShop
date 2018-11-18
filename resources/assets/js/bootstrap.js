@@ -57,4 +57,4 @@ if (token) {
 /**
  * Import SweetAlert Component
  */
-require('sweetalert');
+window.swal = require('sweetalert2')

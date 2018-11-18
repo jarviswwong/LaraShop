@@ -13,6 +13,11 @@ body {
   font-family: Hiragino Sans GB, "Hiragino Sans GB", Helvetica, "Microsoft YaHei", Arial,sans-serif;
 }
 
+// 修改swal样式
+.swal2-popup {
+  font-size: 1.6rem !important;
+}
+
 /* 顶部导航 */
 
 .navbar-static-top {

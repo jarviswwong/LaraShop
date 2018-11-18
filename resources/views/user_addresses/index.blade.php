@@ -57,29 +57,46 @@
                 var that = this;
 
                 swal({
-                    title: "确认删除该地址？",
-                    icon: "warning",
-                    buttons: ['取消', '确定'],
-                    dangerMode: true,
-                }).then(function (willDelete) {
-                    if (willDelete) {
-                        axios.delete('/user_addresses/destroy/' + id)
+                    type: 'warning',
+                    title: '确认删除该地址？',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    showLoaderOnConfirm: true,
+                    focusCancel: true,
+                    preConfirm: () => {
+                        return axios.delete('/user_addresses/destroy/' + id)
                             .then((res) => {
-                                if (parseInt(res.data.status, 10) === 1) {
-                                    swal(res.data.msg, {
-                                        icon: "success",
-                                    });
-                                    $(that).parents('tr').remove();
-                                }
-                                else {
-                                    swal(res.data.msg, {
-                                        icon: "error",
-                                    });
-                                }
+                                return res.data;
                             })
-                    }
-                    else {
-                        return;
+                            .catch((error) => {
+                                swal({
+                                    type: error,
+                                    title: '未知错误：删除失败'
+                                })
+                            })
+                    },
+                    allowOutsideClick: () => !swal.isLoading(),
+                }).then(function (result) {
+                    if (result.value) {
+                        var data = result.value;
+                        if (parseInt(data.status, 10) === 1) {
+                            swal({
+                                title: data.msg,
+                                type: 'success',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            $(that).parents('tr').remove();
+                        }
+                        else {
+                            swal({
+                                type: error,
+                                title: data.msg,
+                            });
+                        }
                     }
                 })
             })

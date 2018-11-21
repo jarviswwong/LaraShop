@@ -29,21 +29,6 @@ class ProductsController extends Controller
     }
 
     /**
-     * Show interface.
-     *
-     * @param mixed $id
-     * @param Content $content
-     * @return Content
-     */
-    public function show($id, Content $content)
-    {
-        return $content
-            ->header('Detail')
-            ->description('description')
-            ->body($this->detail($id));
-    }
-
-    /**
      * Edit interface.
      *
      * @param mixed $id
@@ -94,7 +79,10 @@ class ProductsController extends Controller
         $grid->actions(function ($actions) {
             $actions->disableView();
             $actions->disableDelete();
+
+            $actions->append('<a href="' . route('admin.product_skus.index', $actions->getKey()) . '"><i class="fa fa-shopping-cart"></i></a>');
         });
+
 
         $grid->tools(function ($tools) {
             // 禁用批量删除按钮
@@ -165,7 +153,8 @@ class ProductsController extends Controller
 //            $form->model()->price = collect($form->input('skus'))
 //                ->where(Form::REMOVE_FLAG_NAME, 0)
 //                ->min('price') ?: 0;
-            $form->model()->price = 0;
+
+            $form->model()->price = 100000.00;
         });
 
         return $form;

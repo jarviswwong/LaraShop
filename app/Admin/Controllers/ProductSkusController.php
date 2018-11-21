@@ -130,14 +130,15 @@ class ProductSkusController extends Controller
         });
 
         $form->saving(function (Form $form) use ($product_id) {
-            $product = Product::all()->where('id', $product_id)->first();
-            $currentPrice = $product->price;
-            // If Sku's price << product's price, then update products' price
-            if (bccomp('0.00', $currentPrice, 2) == 0
-                || bccomp($form->input('price'), $currentPrice, 2) == -1) {
-                $product->update(['price' => $form->input('price')]);
-            }
             $form->model()->product_id = $product_id;
+        });
+
+        $form->saved(function (Form $form) use ($product_id) {
+            $product = Product::all()->where('id', $product_id)->first();
+            $minPrice = ProductSku::all()->where('product_id', $product_id)->min('price');
+
+            // Use the sku's min price to update product's price
+            $product->price != $minPrice ? $product->update(['price' => $minPrice]) : '';
         });
 
         return $form;

@@ -114,7 +114,12 @@ class ProductSkusController extends Controller
                 return [$item['id'] => $item['name']];
             });
 
-        $form->tab('基本内容', function ($form) use ($attributes) {
+        $form->tab('基本内容', function ($form) use ($attributes, $product_id) {
+            $form->display('', '商品名称')
+                ->with(function() use ($product_id) {
+                $title = Product::where('id', $product_id)->pluck('title')->first();
+                return $title;
+            });
             $form->text('title', 'SKU 名称')->rules('required');
             $form->text('description', 'SKU 描述')->rules('required');
             $form->decimal('price', 'SKU 单价');

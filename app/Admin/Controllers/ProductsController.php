@@ -134,14 +134,6 @@ class ProductsController extends Controller
             ->options(['1' => '是', '0' => '否'])
             ->default('0');
 
-//        $form->hasMany('skus', function (Form\NestedForm $skuForm) use ($form) {
-//            $skuForm->text('title', 'SKU 名称')->rules('required');
-//            $skuForm->text('description', 'SKU 描述')->rules('required');
-//            $skuForm->text('price', '单价')->rules('required|numeric|min:0.01');
-//            $skuForm->text('stock', '剩余库存')->rules('required|integer|min:0');
-//
-//            $attributes = $form->model()->skus_attributes;
-//        });
         $form->hasMany('skus_attributes', '商品分类属性列表',
             function (Form\NestedForm $attrForm) {
                 $attrForm->text('name', '商品类别')->rules('required');
@@ -150,11 +142,7 @@ class ProductsController extends Controller
 
         // Saving Function CallBack
         $form->saving(function (Form $form) {
-//            $form->model()->price = collect($form->input('skus'))
-//                ->where(Form::REMOVE_FLAG_NAME, 0)
-//                ->min('price') ?: 0;
-
-            $form->model()->price = 100000.00;
+            $form->model()->price = '0.00';
         });
 
         return $form;

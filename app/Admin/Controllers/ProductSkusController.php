@@ -130,9 +130,11 @@ class ProductSkusController extends Controller
         });
 
         $form->saving(function (Form $form) use ($product_id) {
-            // If Sku's price << product's price, then update products' price
             $product = Product::all()->where('id', $product_id)->first();
-            if (bccomp($form->input('price'), $product->price, 2) == -1) {
+            $currentPrice = $product->price;
+            // If Sku's price << product's price, then update products' price
+            if (bccomp('0.00', $currentPrice, 2) == 0
+                || bccomp($form->input('price'), $currentPrice, 2) == -1) {
                 $product->update(['price' => $form->input('price')]);
             }
             $form->model()->product_id = $product_id;
@@ -157,5 +159,32 @@ class ProductSkusController extends Controller
     public function update($product_id, $id)
     {
         return $this->form($product_id)->update($id);
+    }
+
+
+    public function destroy($product_id, $id)
+    {
+        if ($this->form($product_id)->destroy($id)) {
+            $data = [
+                'status' => true,
+                'message' => trans('admin.delete_succeeded'),
+            ];
+
+            // If destroy success, update the product price to the min one or zero.
+            $product = Product::all()->where('id', $product_id)->first();
+            $productSku = ProductSku::all()->where('product_id', $product_id);
+            if (!$productSku->isEmpty()) {
+                $product->update(['price' => $productSku->min('price')]);
+            } else {
+                $product->update(['price' => '0.00']);
+            }
+        } else {
+            $data = [
+                'status' => false,
+                'message' => trans('admin.delete_failed'),
+            ];
+        }
+
+        return response()->json($data);
     }
 }

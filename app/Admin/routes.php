@@ -25,4 +25,5 @@ Route::group([
     $router->post('product_skus/{product_id}', 'ProductSkusController@store');
     $router->get('product_skus/{product_id}/{id}/edit', 'ProductSkusController@edit');
     $router->put('product_skus/{product_id}/{id}', 'ProductSkusController@update');
+    $router->delete('product_skus/{product_id}/{id}', 'ProductSkusController@destroy');
 });

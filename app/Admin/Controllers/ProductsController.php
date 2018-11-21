@@ -53,8 +53,8 @@ class ProductsController extends Controller
     public function edit($id, Content $content)
     {
         return $content
-            ->header('Edit')
-            ->description('description')
+            ->header('编辑商品')
+            ->description('Edit Product')
             ->body($this->form()->edit($id));
     }
 
@@ -67,8 +67,8 @@ class ProductsController extends Controller
     public function create(Content $content)
     {
         return $content
-            ->header('Create')
-            ->description('description')
+            ->header('添加商品')
+            ->description('Create Product')
             ->body($this->form());
     }
 
@@ -111,24 +111,24 @@ class ProductsController extends Controller
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
-    {
-        $show = new Show(Product::findOrFail($id));
-
-        $show->id('Id');
-        $show->title('Title');
-        $show->description('Description');
-        $show->image('Image');
-        $show->on_sale('On sale');
-        $show->rating('Rating');
-        $show->sold_count('Sold count');
-        $show->review_count('Review count');
-        $show->price('Price');
-        $show->created_at('Created at');
-        $show->updated_at('Updated at');
-
-        return $show;
-    }
+//    protected function detail($id)
+//    {
+//        $show = new Show(Product::findOrFail($id));
+//
+//        $show->id('Id');
+//        $show->title('Title');
+//        $show->description('Description');
+//        $show->image('Image');
+//        $show->on_sale('On sale');
+//        $show->rating('Rating');
+//        $show->sold_count('Sold count');
+//        $show->review_count('Review count');
+//        $show->price('Price');
+//        $show->created_at('Created at');
+//        $show->updated_at('Updated at');
+//
+//        return $show;
+//    }
 
     /**
      * Make a form builder.
@@ -139,14 +139,34 @@ class ProductsController extends Controller
     {
         $form = new Form(new Product);
 
-        $form->text('title', 'Title');
-        $form->textarea('description', 'Description');
-        $form->image('image', 'Image');
-        $form->switch('on_sale', 'On sale')->default(1);
-        $form->decimal('rating', 'Rating')->default(5.00);
-        $form->number('sold_count', 'Sold count');
-        $form->number('review_count', 'Review count');
-        $form->decimal('price', 'Price');
+        $form->text('title', '商品名称')->rules('required');
+        $form->image('image', '封面图片')->rules('required|image');
+        $form->editor('description', '商品描述')->rules('required');
+        $form->radio('on_sale', '上架')
+            ->options(['1' => '是', '0' => '否'])
+            ->default('0');
+
+//        $form->hasMany('skus', function (Form\NestedForm $skuForm) use ($form) {
+//            $skuForm->text('title', 'SKU 名称')->rules('required');
+//            $skuForm->text('description', 'SKU 描述')->rules('required');
+//            $skuForm->text('price', '单价')->rules('required|numeric|min:0.01');
+//            $skuForm->text('stock', '剩余库存')->rules('required|integer|min:0');
+//
+//            $attributes = $form->model()->skus_attributes;
+//        });
+        $form->hasMany('skus_attributes', '商品分类属性列表',
+            function (Form\NestedForm $attrForm) {
+                $attrForm->text('name', '商品类别')->rules('required');
+            }
+        );
+
+        // Saving Function CallBack
+        $form->saving(function (Form $form) {
+//            $form->model()->price = collect($form->input('skus'))
+//                ->where(Form::REMOVE_FLAG_NAME, 0)
+//                ->min('price') ?: 0;
+            $form->model()->price = 0;
+        });
 
         return $form;
     }

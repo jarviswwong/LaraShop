@@ -142,7 +142,8 @@ class ProductsController extends Controller
 
         // Saving Function CallBack
         $form->saving(function (Form $form) {
-            $form->model()->price = '0.00';
+            if (!$form->model()->price)
+                $form->model()->price = '0.00';
         });
 
         return $form;

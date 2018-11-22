@@ -94,31 +94,6 @@ class ProductsController extends Controller
     }
 
     /**
-     * Make a show builder.
-     *
-     * @param mixed $id
-     * @return Show
-     */
-//    protected function detail($id)
-//    {
-//        $show = new Show(Product::findOrFail($id));
-//
-//        $show->id('Id');
-//        $show->title('Title');
-//        $show->description('Description');
-//        $show->image('Image');
-//        $show->on_sale('On sale');
-//        $show->rating('Rating');
-//        $show->sold_count('Sold count');
-//        $show->review_count('Review count');
-//        $show->price('Price');
-//        $show->created_at('Created at');
-//        $show->updated_at('Updated at');
-//
-//        return $show;
-//    }
-
-    /**
      * Make a form builder.
      *
      * @return Form

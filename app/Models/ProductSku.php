@@ -14,14 +14,16 @@ class ProductSku extends Model
         'attributes' => 'json'
     ];
 
-    public function product()
-    {
-        $this->belongsTo(Product::class);
-    }
+    // Define extra attribute
+    protected $appends = ['format_attributes'];
 
-    public function setAttributesAttribute($json)
+    /**
+     * Set field format_attributes before save
+     * @param $attributes
+     */
+    public function setFormatAttributesAttribute($attributes)
     {
-        list($ids, $values) = array_divide($json);
+        list($ids, $values) = array_divide($attributes);
         $attributes = collect([]);
         foreach ($ids as $key => $id) {
             $item = ['id' => $id, 'value' => $values[$key]];
@@ -30,13 +32,22 @@ class ProductSku extends Model
         $this->attributes['attributes'] = $attributes->toJson();
     }
 
-    public function getAttributesAttribute($json)
+    /**
+     * Modify field format_attributes before get
+     * @return string
+     */
+    public function getFormatAttributesAttribute()
     {
-        $attributes = json_decode($json, true);
+        $attributes = json_decode($this->attributes['attributes'], true);
         $format_array = collect([]);
         foreach ($attributes as $attribute) {
             $format_array->put($attribute['id'], $attribute['value']);
         }
         return $format_array->toJson();
+    }
+
+    public function product()
+    {
+        $this->belongsTo(Product::class);
     }
 }

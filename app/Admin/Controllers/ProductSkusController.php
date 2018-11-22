@@ -125,7 +125,7 @@ class ProductSkusController extends Controller
             $form->decimal('price', 'SKU 单价');
             $form->number('stock', '库存');
 
-            $form->embeds('attributes', '商品属性', function ($form) use ($attributes) {
+            $form->embeds('format_attributes', '商品属性', function ($form) use ($attributes) {
                 foreach ($attributes as $id => $name) {
                     $form->text($id, $name)->rules('required', [
                         'required' => $name . '必须填写!',

@@ -180,7 +180,7 @@ return [
     */
     'operation_log' => [
 
-        'enable' => true,
+        'enable' => false,
 
         /*
          * Routes that will not log to database.

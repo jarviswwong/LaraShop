@@ -108,18 +108,18 @@ class ProductSkusController extends Controller
         $form = new Form(new ProductSku);
 
         // Get All the attributes from this product
-        $attributes = ProductSkuAttributes::all()
-            ->where('product_id', $product_id)
+        $attributes = ProductSkuAttributes::query()
+            ->where('product_id', $product_id)->get()
             ->mapWithKeys(function ($item) {
                 return [$item['id'] => $item['name']];
             });
 
         $form->tab('基本内容', function ($form) use ($attributes, $product_id) {
             $form->display('', '商品名称')
-                ->with(function() use ($product_id) {
-                $title = Product::where('id', $product_id)->pluck('title')->first();
-                return $title;
-            });
+                ->with(function () use ($product_id) {
+                    $title = Product::where('id', $product_id)->pluck('title')->first();
+                    return $title;
+                });
             $form->text('title', 'SKU 名称')->rules('required');
             $form->text('description', 'SKU 描述')->rules('required');
             $form->decimal('price', 'SKU 单价');
@@ -139,8 +139,8 @@ class ProductSkusController extends Controller
         });
 
         $form->saved(function (Form $form) use ($product_id) {
-            $product = Product::all()->where('id', $product_id)->first();
-            $minPrice = ProductSku::all()->where('product_id', $product_id)->min('price');
+            $product = Product::query()->where('id', $product_id)->first();
+            $minPrice = ProductSku::query()->where('product_id', $product_id)->min('price');
 
             // Use the sku's min price to update product's price
             $product->price != $minPrice ? $product->update(['price' => $minPrice]) : '';
@@ -177,8 +177,8 @@ class ProductSkusController extends Controller
             ];
 
             // If destroy success, update the product price to the min one or zero.
-            $product = Product::all()->where('id', $product_id)->first();
-            $productSku = ProductSku::all()->where('product_id', $product_id);
+            $product = Product::query()->where('id', $product_id)->first();
+            $productSku = ProductSku::query()->where('product_id', $product_id)->get();
             if (!$productSku->isEmpty()) {
                 $product->update(['price' => $productSku->min('price')]);
             } else {

@@ -102,6 +102,12 @@ class ProductsController extends Controller
     {
         $form = new Form(new Product);
 
+        $form->footer(function ($footer) {
+            $footer->disableViewCheck();
+            $footer->disableEditingCheck();
+            $footer->disableCreatingCheck();
+        });
+
         $form->text('title', '商品名称')->rules('required');
         $form->image('image', '封面图片')
             ->resize(800, null, function ($constraint) {
@@ -114,9 +120,9 @@ class ProductsController extends Controller
             ->options(['1' => '是', '0' => '否'])
             ->default('0');
 
-        $form->hasMany('skus_attributes', '商品分类属性列表',
+        $form->hasMany('skus_attributes', '商品分类属性',
             function (Form\NestedForm $attrForm) {
-                $attrForm->text('name', '商品类别')->rules('required');
+                $attrForm->text('name', '属性名')->rules('required');
             }
         );
 

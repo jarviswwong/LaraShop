@@ -29,6 +29,10 @@ class Product extends Model
         return $this->hasMany(ProductSkuAttributes::class);
     }
 
+    public function attr_values() {
+        return $this->hasMany(ProductAttrValue::class);
+    }
+
     /**
      * This function turn ImageUrl into full links
      * When the blade template use '$product->image_url', this function will be called.

@@ -12,4 +12,8 @@ class ProductSkuAttributes extends Model
     {
         $this->belongsTo(Product::class);
     }
+
+    public function attr_values() {
+        $this->hasMany(ProductAttrValue::class);
+    }
 }

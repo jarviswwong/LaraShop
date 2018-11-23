@@ -46,6 +46,10 @@ class ProductSku extends Model
         return $format_array->toJson();
     }
 
+    public function getAttributesAttribute() {
+        return json_decode($this->attributes['attributes'], true);
+    }
+
     public function product()
     {
         $this->belongsTo(Product::class);

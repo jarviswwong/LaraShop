@@ -192,23 +192,42 @@ body {
     & > label {
       color: #999;
       font-size: 12px;
-      padding: 0 10px 0 10px;
+      padding: 7px 0;
+      width: 66px;
     }
     .btn-group {
       margin-left: -10px;
       label {
+        box-sizing: border-box;
         border-radius: 0 !important;
-        margin: 1px 5px;
-        padding: 2px 5px;
+        border: 0px;
+        margin: 0px 5px;
+        padding: 1px;
         font-size: 12px;
-      }
-      .btn-default.active, .btn-default:hover {
-        margin-top: 0px !important;
-        background: #fff !important;
-        border: 2px solid red !important;
-      }
-      .btn.focus {
-        outline: 0 !important;
+        color: #000;
+        line-height: 28px;
+        .wrapper {
+          padding: 0px 9px;
+          border: 1px solid #b8b7bd;
+          &:hover {
+            border: 2px solid red !important;
+            background: #fff !important;
+            margin: -1px;
+          }
+        }
+        &.active > .wrapper {
+          border: 2px solid red !important;
+          background: #fff !important;
+          margin: -1px;
+        }
+        &.active, &:hover {
+          border: 0px transparent !important;
+          background-color: #fff !important;
+          box-shadow: none;
+        }
+        & {
+          outline: none !important;
+        }
       }
     }
   }
@@ -216,7 +235,8 @@ body {
     label {
       color: #999;
       font-size: 12px;
-      padding: 0 10px 0 10px;
+      padding: 7px 0;
+      width: 66px;
     }
     font-size: 12px;
     color: #888;
@@ -225,15 +245,20 @@ body {
       width: 50px;
       display: inline-block;
       border-radius: 0 !important;
+      margin-left: -5px;
     }
-    span {
+    & > span {
       color: #999;
       font-size: 12px;
       padding-left: 10px;
     }
+    .stock {
+      display: inline-block;
+      margin-left: 15px;
+    }
   }
   .buttons {
-    padding-left: 44px;
+    padding-left: 66px;
   }
 
   .product-detail {

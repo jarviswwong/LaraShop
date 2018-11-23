@@ -103,7 +103,12 @@ class ProductsController extends Controller
         $form = new Form(new Product);
 
         $form->text('title', '商品名称')->rules('required');
-        $form->image('image', '封面图片')->rules('required|image');
+        $form->image('image', '封面图片')
+            ->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->rules('required|image');
         $form->editor('description', '商品描述')->rules('required');
         $form->radio('on_sale', '上架')
             ->options(['1' => '是', '0' => '否'])

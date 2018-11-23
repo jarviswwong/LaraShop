@@ -26,29 +26,26 @@
                                     <label>{{$attribute->name}}</label>
                                     <div class="btn-group" data-toggle="buttons">
                                         @foreach($product->skus as $sku)
-                                            {{--<label class="btn btn-default sku-btn" title="{{ $sku->description }}">--}}
-                                                {{--<input type="radio" name="skus" autocomplete="off"--}}
-                                                       {{--value="{{ $sku->id }}"> {{ $sku->title }}--}}
-                                            {{--</label>--}}
+                                            @foreach($sku->attributes as $item)
+                                                @if($item['id'] == $attribute->id)
+                                                    <label class="btn btn-default sku-btn" data-toggle="tooltip"
+                                                           title="{{ $sku->description }}">
+                                                        <div class="wrapper">
+                                                            <input type="radio" name="skus" autocomplete="off"
+                                                                   value="{{ $sku->id }}"> {{ $item['value'] }}
+                                                        </div>
+                                                    </label>
+                                                    @break
+                                                @endif
+                                            @endforeach
                                         @endforeach
                                     </div>
                                 </div>
                             @endforeach
-                            {{--<div class="skus">--}}
-                            {{--<label>选择</label>--}}
-                            {{--<div class="btn-group" data-toggle="buttons">--}}
-                            {{--@foreach($product->skus as $sku)--}}
-                            {{--<label class="btn btn-default sku-btn" title="{{ $sku->description }}">--}}
-                            {{--<input type="radio" name="skus" autocomplete="off"--}}
-                            {{--value="{{ $sku->id }}"> {{ $sku->title }}--}}
-                            {{--</label>--}}
-                            {{--@endforeach--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
                             <div class="cart_amount">
                                 <label>数量</label>
-                                <input type="text" class="form-control input-sm" value="1"><span>件</span><span
-                                        class="stock"></span></div>
+                                <input type="text" class="form-control input-sm" value="1"><span>件</span>
+                                <div class="stock">库存 <span>0</span> 件</div></div>
                             <div class="buttons">
                                 <button class="btn btn-success btn-favor">❤ 收藏</button>
                                 <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
@@ -57,11 +54,14 @@
                     </div>
                     <div class="product-detail">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#product-detail-tab"
-                                                                      aria-controls="product-detail-tab" role="tab"
-                                                                      data-toggle="tab">商品详情</a></li>
-                            <li role="presentation"><a href="#product-reviews-tab" aria-controls="product-reviews-tab"
-                                                       role="tab" data-toggle="tab">用户评价</a></li>
+                            <li role="presentation" class="active">
+                                <a href="#product-detail-tab" aria-controls="product-detail-tab" role="tab"
+                                   data-toggle="tab">商品详情</a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#product-reviews-tab" aria-controls="product-reviews-tab" role="tab"
+                                   data-toggle="tab">用户评价</a>
+                            </li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="product-detail-tab">
@@ -75,4 +75,12 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scriptsAfterJs')
+    <script>
+        $(document).ready(function () {
+            // $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
+        });
+    </script>
 @endsection

@@ -38,18 +38,15 @@
                                 <div class="skus">
                                     <label>{{$attribute->name}}</label>
                                     <div class="btn-group attr-group" data-id="{{$key}}" data-toggle="buttons">
-                                        @foreach($attr_values as $attr_value)
-                                            @if($attr_value['attr_id'] == $attribute->id)
-                                                @foreach($attr_value['items'] as $item)
-                                                    <label class="btn btn-default sku-btn"
-                                                           data-symbol="{{$item['symbol']}}" data-toggle="tooltip">
-                                                        <div class="wrapper">
-                                                            <input type="radio" name="skus" autocomplete="off"
-                                                                   value="{{ $item['symbol'] }}"> {{ $item['value'] }}
-                                                        </div>
-                                                    </label>
-                                                @endforeach
-                                                @break
+                                        @foreach($product->attr_values as $attr_value)
+                                            @if($attr_value->attr_id == $attribute->id)
+                                                <label class="btn btn-default sku-btn"
+                                                       data-symbol="{{ $attr_value->symbol }}" data-toggle="tooltip">
+                                                    <div class="wrapper">
+                                                        <input type="radio" name="skus" autocomplete="off"
+                                                               value="{{ $attr_value->symbol }}"> {{ $attr_value->value }}
+                                                    </div>
+                                                </label>
                                             @endif
                                         @endforeach
                                     </div>
@@ -147,13 +144,11 @@
                                 html: html,
                                 type: 'error',
                             });
-                        }
-                        else {
+                        } else {
                             swal('服务器错误', '', 'error');
                         }
                     });
-                }
-                else {
+                } else {
                     swal('请选择您要的商品信息', '', 'info');
                 }
             });
@@ -175,11 +170,9 @@
                                 .then(function () {
                                     window.location.href = '{{route('login')}}';
                                 });
-                        }
-                        else if (error.response && error.response.data.msg) {
+                        } else if (error.response && error.response.data.msg) {
                             swal(error.response.data.msg, '', 'error');
-                        }
-                        else {
+                        } else {
                             swal('服务器错误', '', 'error');
                         }
                     })
@@ -212,13 +205,12 @@
                         $(this).removeClass('active').removeClass('focus');
                         selected[id] = '';
                     }
-                    console.log(selected);
+                    // console.log(selected);
                     // 先重置其他不可点击按钮
                     resetSkuItemsStatus();
                     changeStockAndPrice(selected);
                     checkSkuItemsStatus(selected);
-                }
-                else {
+                } else {
                     // 防止防止bootstrap的btn-group事件
                     e.preventDefault();
                     e.stopImmediatePropagation();
@@ -305,8 +297,7 @@
                         myPrice[key] = sku_items[key].price;
                         myStock[key] = sku_items[key].stock;
                         return sku_items[key].stock;
-                    }
-                    else
+                    } else
                         return 0;
                 }
 

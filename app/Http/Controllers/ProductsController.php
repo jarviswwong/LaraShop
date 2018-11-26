@@ -29,33 +29,6 @@ class ProductsController extends Controller
             });
     }
 
-    /**
-     * 获取该产品下所有已有的商品属性并格式化:
-     * "[[ attr_id, items => [[symbol,value]] ]]"
-     * @param Product $product
-     * @return array
-     */
-    public function _getProductAttrValues(Product $product)
-    {
-        $skus_attrs = $product->skus_attributes;
-        $attr_values = $product->attr_values;
-        $result = collect([]);
-        foreach ($skus_attrs as $skus_attr) {
-            $collect = collect(['attr_id' => $skus_attr->id]);
-            $items = collect([]);
-            $attr_values->where('attr_id', $skus_attr->id)
-                ->each(function ($item) use ($items) {
-                    $attrs = collect([]);
-                    $attrs->put('symbol', $item->symbol);
-                    $attrs->put('value', $item->value);
-                    $items->push($attrs);
-                });
-            $collect->put('items', $items);
-            $result->push($collect);
-        }
-        return $result;
-    }
-
     public function index(Request $request)
     {
         $builder = Product::where('on_sale', true);
@@ -106,8 +79,14 @@ class ProductsController extends Controller
         }
 
         $sku_items = $this->_getProductSkuItems($product);
-        $attr_values = $this->_getProductAttrValues($product);
-        $symbolArr = $attr_values->pluck('items')
+        $symbolArr = $product->attr_values
+            ->map(function ($item) {
+                return ['attr_id' => $item->attr_id, 'symbol' => $item->symbol];
+            })
+            ->groupBy('attr_id')
+            ->sortBy(function ($item, $key) {
+                return $key;
+            })->values()
             ->map(function ($item) {
                 return $item->pluck('symbol');
             })
@@ -117,7 +96,6 @@ class ProductsController extends Controller
             [
                 'product' => $product,
                 'sku_items' => $sku_items,
-                'attr_values' => $attr_values,
                 'symbolArr' => $symbolArr,
                 'favored' => $favored,
             ]

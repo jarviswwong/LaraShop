@@ -57,7 +57,7 @@
     <script>
         var filters = JSON.parse('{!! json_encode($filters) !!}');
 
-        console.log(filters);
+        // console.log(filters);
 
         $(document).ready(function () {
             $('.search-form input[name="search"]').val(filters.search);

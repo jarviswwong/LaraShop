@@ -103,11 +103,57 @@
                 myStock = {},
                 myPrice = {};
 
-            // 所有属性值的symbol组成的数组
+            // 所有属性值的symbol组成的对象
             let keys = JSON.parse('{!! $symbolArr !!}');
 
-            // SKU数组
+            // skuItems对象
             let sku_items = JSON.parse('{!! $sku_items !!}');
+
+            // 加入购物车按钮点击事件
+            $('.btn-add-to-cart').on('click', function () {
+                let selectedStr = arrToStr(selected);
+                // 判断用户是否完整选择了商品信息
+                if (selected.length === keys.length
+                    &&
+                    sku_items.hasOwnProperty(selectedStr)
+                ) {
+                    axios.post('{{route('cart.add')}}',
+                        {
+                            'sku_id': sku_items[selectedStr]['sku_id'],
+                            'amount': parseInt($('.cart_amount input').val(), 10),
+                        }
+                    ).then(function () {
+                        swal('加入购物车成功', '', 'success');
+                    }, function (error) {
+                        if (error.response.status === 401) {
+                            swal('请先登录', '', 'error')
+                                .then(function () {
+                                    window.location.href = '{{route('login')}}';
+                                });
+                        }
+                        // '422'代表表单校验错误
+                        else if (error.response.status === 422) {
+                            let html = '<div>';
+                            _.each(error.response.data.errors, function (errors) {
+                                _.each(errors, function (error) {
+                                    html += error + '<br/>';
+                                });
+                            });
+                            html += '</div>';
+                            swal({
+                                html: html,
+                                type: 'error',
+                            });
+                        }
+                        else {
+                            swal('服务器错误', '', 'error');
+                        }
+                    });
+                }
+                else {
+                    swal('请选择您要的商品信息', '', 'info');
+                }
+            });
 
             // 收藏按钮点击事件
             $(document).on('click', '.btn-favor', function () {
@@ -149,7 +195,7 @@
                     })
             });
 
-            // skuItem 点击事件
+            // 每个skuItem的点击事件
             $("label.sku-btn").on('click', function (e) {
                 if (!$(this).hasClass('disabled')) {
                     let btnGroup = $(this).parent('.attr-group');
@@ -196,6 +242,7 @@
                 return attributes.slice(0, attributes.length - 1);
             }
 
+            // 改变库存数与价格
             function changeStockAndPrice(selected) {
                 let attributes = arrToStr(selected);
                 $('span.price-value').text(myPrice.hasOwnProperty(attributes) ? myPrice[attributes] : $('span.price-value').data('origin'));

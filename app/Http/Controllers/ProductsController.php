@@ -19,7 +19,13 @@ class ProductsController extends Controller
     {
         return $product->skus
             ->mapWithKeys(function ($item) {
-                return [$item['attributes'] => ['price' => $item['price'], 'stock' => $item['stock']]];
+                return [
+                    $item['attributes'] => [
+                        'sku_id' => $item['id'],
+                        'price' => $item['price'],
+                        'stock' => $item['stock']
+                    ]
+                ];
             });
     }
 

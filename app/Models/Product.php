@@ -19,13 +19,11 @@ class Product extends Model
 
     protected $appends = ['max_price'];
 
-    // One product has many skus
     public function skus()
     {
         return $this->hasMany(ProductSku::class);
     }
 
-    // One product has many skusAttributes
     public function skus_attributes()
     {
         return $this->hasMany(ProductSkuAttributes::class);
@@ -51,7 +49,8 @@ class Product extends Model
     }
 
     // 获取所属SKU的最高价格
-    public function getMaxPriceAttribute() {
+    public function getMaxPriceAttribute()
+    {
         return $this->skus->max('price');
     }
 }

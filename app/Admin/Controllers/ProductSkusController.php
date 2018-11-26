@@ -206,11 +206,11 @@ class ProductSkusController extends Controller
                     'value' => request('attr_' . $id),
                     'attr_id' => $id
                 ]);
-                $attributes .= $str . ',';
+                $attributes .= $str . ';';
             }
 
             $form->model()->product_id = $product_id;
-            $form->model()->attributes = rtrim($attributes, ',');
+            $form->model()->attributes = rtrim($attributes, ';');
         });
 
         $form->saved(function () use ($product_id) {
@@ -229,7 +229,7 @@ class ProductSkusController extends Controller
     {
         if ($attrString) {
             // 将每个symbol从字符串中取出来
-            $attrString = explode(',', $attrString);
+            $attrString = explode(';', $attrString);
             $builder = ProductAttrValue::query()->where('product_id', $product_id);
             if ($attrString) {
                 $result = $builder->whereIn('symbol', $attrString)->get()

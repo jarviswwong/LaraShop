@@ -17,6 +17,8 @@ class Product extends Model
         'on_sale' => 'boolean'
     ];
 
+    protected $appends = ['max_price'];
+
     // One product has many skus
     public function skus()
     {
@@ -29,7 +31,8 @@ class Product extends Model
         return $this->hasMany(ProductSkuAttributes::class);
     }
 
-    public function attr_values() {
+    public function attr_values()
+    {
         return $this->hasMany(ProductAttrValue::class);
     }
 
@@ -45,5 +48,10 @@ class Product extends Model
             return $this->image;
         }
         return Storage::disk('public')->url($this->image);
+    }
+
+    // 获取所属SKU的最高价格
+    public function getMaxPriceAttribute() {
+        return $this->skus->max('price');
     }
 }

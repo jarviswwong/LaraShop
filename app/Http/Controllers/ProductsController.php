@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
 use App\Models\Product;
+use function foo\func;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -46,12 +47,85 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function show(Product $product, Request $request)
+    public function show(Product $product)
     {
         if (!$product->on_sale) {
             throw new InvalidRequestException('商品未开售');
         }
 
-        return view('products.show', ['product' => $product]);
+        $sku_items = $this->_getProductSkuItems($product);
+        $attr_values = $this->_getProductAttrValues($product);
+        $symbolArr = $attr_values->pluck('items')
+            ->map(function ($item) {
+                return $item->pluck('symbol');
+            })
+            ->toJson();
+
+        return view('products.show',
+            [
+                'product' => $product,
+                'sku_items' => $sku_items,
+                'attr_values' => $attr_values,
+                'symbolArr' => $symbolArr,
+            ]
+        );
+    }
+
+    /**
+     * 获取商品下SKU并格式化:
+     * "[symbols;] => [price, stock]"
+     * @param Product $product
+     * @return mixed
+     */
+    public function _getProductSkuItems(Product $product)
+    {
+        return $product->skus
+            ->mapWithKeys(function ($item) {
+                return [$item['attributes'] => ['price' => $item['price'], 'stock' => $item['stock']]];
+            });
+    }
+
+    /**
+     * 获取该产品下所有已有的商品属性并格式化:
+     * "[[ attr_id, items => [[symbol,value]] ]]"
+     * @param Product $product
+     * @return array
+     */
+    public function _getProductAttrValues(Product $product)
+    {
+        $skus_attrs = $product->skus_attributes;
+        $attr_values = $product->attr_values;
+        $result = collect([]);
+        foreach ($skus_attrs as $skus_attr) {
+            $collect = collect(['attr_id' => $skus_attr->id]);
+            $items = collect([]);
+            $attr_values->where('attr_id', $skus_attr->id)
+                ->each(function ($item) use ($items) {
+                    $attrs = collect([]);
+                    $attrs->put('symbol', $item->symbol);
+                    $attrs->put('value', $item->value);
+                    $items->push($attrs);
+                });
+            $collect->put('items', $items);
+            $result->push($collect);
+        }
+        return $result;
+    }
+
+
+    /**
+     * test function
+     * @param Product $product
+     */
+    public function getSkuItems(Product $product)
+    {
+        $attr_values = $this->_getProductAttrValues($product);
+        dd(
+            $attr_values->pluck('items')
+                ->map(function ($item) {
+                    return $item->pluck('symbol');
+                })
+                ->toJson()
+        );
     }
 }

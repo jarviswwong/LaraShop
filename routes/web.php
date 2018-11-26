@@ -31,3 +31,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/user_addresses/destroy/{userAddress}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
     });
 });
+
+// Test Route
+Route::get('test/{product}', 'ProductsController@getSkuItems');

@@ -10,10 +10,6 @@ class ProductSku extends Model
         'title', 'description', 'price', 'stock', 'attributes'
     ];
 
-    protected $casts = [
-        'attributes' => 'json'
-    ];
-
     public function product()
     {
         $this->belongsTo(Product::class);

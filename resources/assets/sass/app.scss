@@ -150,20 +150,21 @@ body {
       padding-left: 10px;
     }
     em {
-      font-family: Arial;
+      font-family: arial;
       font-size: 18px;
       font-style: normal;
+      font-weight: 400;
       text-decoration: none;
       vertical-align: middle;
     }
     span {
-      font-family: Arial;
-      font-size: 24px;
+      font-family: verdana, arial;
+      font-size: 26px;
       font-weight: bolder;
       text-decoration: none;
       vertical-align: middle;
     }
-    line-height: 30px;
+    line-height: 40px;
     background-color: #e9e9e9;
     color: red;
     font-size: 20px;
@@ -227,6 +228,18 @@ body {
         }
         & {
           outline: none !important;
+        }
+
+        &.disabled > .wrapper {
+          border: 1px dashed #DEDEDE !important;
+          background: #fff !important;
+          margin: 0px;
+          color: #DEDEDE;
+          &:hover {
+            border: 1px dashed #DEDEDE !important;
+            background: #fff !important;
+            margin: 0px;
+          }
         }
       }
     }

@@ -60,8 +60,12 @@
                                 <input type="text" class="form-control input-sm" value="1"><span>件</span>
                                 <div class="stock">库存 <span>0</span> 件</div>
                             </div>
-                            <div class="buttons">
-                                <button class="btn btn-success btn-favor">❤ 收藏</button>
+                            <div class="buttons product-actions">
+                                @if($favored)
+                                    <button class="btn btn-danger btn-disfavor">取消收藏</button>
+                                @else
+                                    <button class="btn btn-success btn-favor">❤ 收藏</button>
+                                @endif
                                 <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
                             </div>
                         </div>
@@ -95,21 +99,61 @@
     <script>
         $(document).ready(function () {
             // myData用于缓存
-            var selected = [],
+            let selected = [],
                 myStock = {},
                 myPrice = {};
 
             // 所有属性值的symbol组成的数组
-            var keys = JSON.parse('{!! $symbolArr !!}');
+            let keys = JSON.parse('{!! $symbolArr !!}');
 
             // SKU数组
-            var sku_items = JSON.parse('{!! $sku_items !!}');
+            let sku_items = JSON.parse('{!! $sku_items !!}');
+
+            // 收藏按钮点击事件
+            $(document).on('click', '.btn-favor', function () {
+                axios.post('{{route('products.favor', ['product' => $product->id])}}')
+                    .then(function () {
+                        swal('收藏成功', '', 'success')
+                            .then(function () {
+                                let actions = $('.product-actions');
+                                actions.children('.btn-favor').remove();
+                                actions.prepend('<button class="btn btn-danger btn-disfavor">取消收藏</button>');
+
+                            });
+                    }, function (error) {
+                        if (error.response && error.response.status === 401) {
+                            swal('请先登录', '', 'error')
+                                .then(function () {
+                                    window.location.href = '{{route('login')}}';
+                                });
+                        }
+                        else if (error.response && error.response.data.msg) {
+                            swal(error.response.data.msg, '', 'error');
+                        }
+                        else {
+                            swal('服务器错误', '', 'error');
+                        }
+                    })
+            });
+
+            // 取消收藏点击事件
+            $(document).on('click', '.btn-disfavor', function () {
+                axios.delete('{{route('products.disfavor', ['product' => $product->id])}}')
+                    .then(function () {
+                        swal('取消收藏成功', '', 'success')
+                            .then(function () {
+                                let actions = $('.product-actions')
+                                actions.children('.btn-disfavor').remove();
+                                actions.prepend('<button class="btn btn-success btn-favor">❤ 收藏</button>');
+                            })
+                    })
+            });
 
             // skuItem 点击事件
             $("label.sku-btn").on('click', function (e) {
                 if (!$(this).hasClass('disabled')) {
-                    var btnGroup = $(this).parent('.attr-group');
-                    var id = $(btnGroup).data('id');
+                    let btnGroup = $(this).parent('.attr-group');
+                    let id = $(btnGroup).data('id');
                     if (!$(this).hasClass('active')) {
                         selected[id] = $(this).data('symbol');
                     } else {
@@ -143,8 +187,8 @@
 
             // 数组转成用';'分割的字符串
             function arrToStr(array) {
-                var attributes = '';
-                for (var i = 0; i < keys.length; ++i) {
+                let attributes = '';
+                for (let i = 0; i < keys.length; ++i) {
                     if (array[i]) {
                         attributes += (array[i] + ';');
                     }
@@ -153,18 +197,18 @@
             }
 
             function changeStockAndPrice(selected) {
-                var attributes = arrToStr(selected);
+                let attributes = arrToStr(selected);
                 $('span.price-value').text(myPrice.hasOwnProperty(attributes) ? myPrice[attributes] : $('span.price-value').data('origin'));
                 $('.stock > span').text(myStock.hasOwnProperty(attributes) ? myStock[attributes] : 0);
             }
 
             // 检查所有skuItem的状态是否可被点击
             function checkSkuItemsStatus(selected) {
-                var i, j;
+                let i, j;
                 for (i = 0; i < keys.length; ++i) {
-                    var checking = selected.slice();
+                    let checking = selected.slice();
                     for (j = 0; j < keys[i].length; ++j) {
-                        var item = keys[i][j];
+                        let item = keys[i][j];
                         if (item === checking[i])
                             continue;
                         checking[i] = item;
@@ -191,7 +235,7 @@
 
             // SKU商品筛选算法
             function getStock(key) {
-                var result = 0,
+                let result = 0,
                     i, j, m,
                     items, n = [];
 

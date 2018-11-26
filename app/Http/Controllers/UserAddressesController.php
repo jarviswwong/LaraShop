@@ -21,8 +21,6 @@ class UserAddressesController extends Controller
     // Use UserAddressRequest to validate form params
     public function store(UserAddress $userAddress, UserAddressRequest $request)
     {
-        $this->authorize('own', $userAddress);
-
         $request->user()->addresses()->create($request->only([
             'province',
             'city',

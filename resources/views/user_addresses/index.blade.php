@@ -27,7 +27,7 @@
                                 <td>{{ $address->full_address }}</td>
                                 <td>{{ $address->zip }}</td>
                                 <td>{{ $address->contact_phone }}</td>
-                                <td>
+                                <td style="text-align: center;">
                                     <a href="{{ route('user_addresses.edit', ['userAddress' => $address->id]) }}"
                                        class="btn btn-primary">修改</a>
                                     <button class="btn btn-danger btn-delete-address" data-id="{{$address->id}}">删除

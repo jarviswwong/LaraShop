@@ -20,6 +20,6 @@
     },
     "dependencies": {
         "china-area-data": "^4.0.0",
-        "sweetalert2": "^7.29.0"
+        "sweetalert2": "^7.29.1"
     }
 }

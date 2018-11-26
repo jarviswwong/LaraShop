@@ -4,10 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddCartRequest;
 use App\Models\CartItem;
+use App\Models\ProductSku;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function index(Request $request)
+    {
+        // 这里的'.'是嵌套预加载
+        $cartItems = $request->user()->cartItems()
+            ->with(
+                [
+                    'product_sku.product',
+                    'product_sku.product.skus_attributes',
+                    'product_sku.product.skus_attributes.attr_values'
+                ]
+            )->get();
+        return view('cart.index', ['cartItems' => $cartItems]);
+    }
+
     public function add(AddCartRequest $request)
     {
         $user = $request->user();
@@ -23,6 +38,12 @@ class CartController extends Controller
             $cart->save();
         }
 
+        return [];
+    }
+
+    public function remove(ProductSku $productSku, Request $request)
+    {
+        $request->user()->cartItems()->where('product_sku_id', $productSku->id)->delete();
         return [];
     }
 }

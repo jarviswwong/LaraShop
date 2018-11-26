@@ -10,10 +10,11 @@ class ProductSkuAttributes extends Model
 
     public function product()
     {
-        $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class);
     }
 
-    public function attr_values() {
-        $this->hasMany(ProductAttrValue::class);
+    public function attr_values()
+    {
+        return $this->hasMany(ProductAttrValue::class, 'attr_id', 'id');
     }
 }

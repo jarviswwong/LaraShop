@@ -37,7 +37,7 @@ class AddCartRequest extends FormRequest
                     }
                 },
             ],
-            'amount' => 'required|integer|min:0'
+            'amount' => 'required|integer|min:1'
         ];
     }
 

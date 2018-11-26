@@ -30,12 +30,6 @@
                                 <td>
                                     <a href="{{ route('user_addresses.edit', ['userAddress' => $address->id]) }}"
                                        class="btn btn-primary">修改</a>
-                                    {{--<form action="{{route('user_addresses.destroy', ['userAddress' => $address->id])}}"--}}
-                                    {{--method="POST" style="display: inline-block;">--}}
-                                    {{--{{csrf_field()}}--}}
-                                    {{--{{method_field('DELETE')}}--}}
-                                    {{--<button class="btn btn-danger" tyle="submit">删除</button>--}}
-                                    {{--</form>--}}
                                     <button class="btn btn-danger btn-delete-address" data-id="{{$address->id}}">删除
                                     </button>
                                 </td>

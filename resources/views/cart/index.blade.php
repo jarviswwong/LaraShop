@@ -94,6 +94,7 @@
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: '确定',
+                cancelButtonText: '取消',
                 isConfirm: true
             }).then(function (result) {
                 if (result.value) {

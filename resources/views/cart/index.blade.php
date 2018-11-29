@@ -148,12 +148,25 @@
 
         // 提交订单事件
         $('.btn-create-order').on('click', function () {
+            let orders = $('input[name=select]:checked');
+            let address = $('#order-form').find('select[name=address]');
+
+            // 前端校验
+            if (orders.length === 0) {
+                swal('错误', '请先勾选需要下单商品', 'error');
+                return;
+            }
+            if (!address.val()) {
+                swal('错误', '请勾选收货地址', 'error');
+                return;
+            }
+
             let data = {
-                'address_id': $('#order-form').find('select[name=address]').val(),
+                'address_id': address.val(),
                 'remark': $('#order-form').find('textarea[name=remark]').val(),
                 'items': [],
             };
-            _.each($('input[name=select]:checked'), function (order) {
+            _.each(orders, function (order) {
                 let sku_id = $(order).val();
                 let amount = $('input.amount[data-id=' + sku_id + ']').val();
                 data.items.push({

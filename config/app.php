@@ -229,4 +229,7 @@ return [
 
     ],
     'faker_locale' => 'zh_CN',
+
+    //  订单过期延迟时间
+    'order_ttl' => 1800,
 ];

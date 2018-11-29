@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InternalException;
 use App\Http\Requests\OrderRequest;
+use App\Http\Requests\Request;
+use App\Jobs\CloseOrder;
 use App\Models\Order;
 use App\Models\ProductSku;
 use App\Models\UserAddress;
@@ -63,6 +65,10 @@ class OrdersController extends Controller
             $user->cartItems()
                 ->whereIn('product_sku_id', $sku_id_collection)
                 ->delete();
+
+            // 分发'订单过期'任务，延迟时间从配置文件中获取
+            CloseOrder::dispatch($order)
+                ->delay(config('app.order_ttl'));
         });
 
         return $order;

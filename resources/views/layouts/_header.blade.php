@@ -36,6 +36,9 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
+                                <a href="{{ route('orders.index') }}">我的订单</a>
+                            </li>
+                            <li>
                                 <a href="{{ route('user_addresses.index') }}">收货地址</a>
                             </li>
                             <li>

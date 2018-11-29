@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InternalException;
 use App\Http\Requests\OrderRequest;
-use App\Http\Requests\Request;
 use App\Jobs\CloseOrder;
 use App\Models\Order;
 use App\Models\ProductSku;
 use App\Models\UserAddress;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
@@ -72,5 +72,22 @@ class OrdersController extends Controller
         });
 
         return $order;
+    }
+
+    public function index(Request $request)
+    {
+        $orders = Order::query()
+            ->with(
+                [
+                    'items.product',
+                    'items.product.skus_attributes',
+                    'items.product.attr_values',
+                    'items.product_sku',
+                ]
+            )->where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+
+        return view('orders.index', ['orders' => $orders]);
     }
 }

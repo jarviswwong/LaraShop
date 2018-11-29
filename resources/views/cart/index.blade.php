@@ -176,7 +176,10 @@
             });
             axios.post('{{route('orders.store')}}', data)
                 .then(function (res) {
-                    swal('订单提交成功', '', 'success');
+                    swal('订单提交成功', '', 'success')
+                        .then(function () {
+                            location.href = '{{route('orders.index')}}';
+                        });
                 }, function (error) {
                     if (error.response.status === 422) {
                         let html = '<div>';

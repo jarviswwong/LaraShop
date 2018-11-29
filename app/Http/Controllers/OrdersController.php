@@ -99,7 +99,7 @@ class OrdersController extends Controller
         $delay_load_relations = [
             'items.product',
             'items.product.skus_attributes',
-            'items.product.attr_values',
+            'items.product.skus_attributes.attr_values',
             'items.product_sku',
         ];
 

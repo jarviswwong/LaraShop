@@ -81,7 +81,7 @@ class OrdersController extends Controller
                 [
                     'items.product',
                     'items.product.skus_attributes',
-                    'items.product.attr_values',
+                    'items.product.skus_attributes.attr_values',
                     'items.product_sku',
                 ]
             )->where('user_id', $request->user()->id)
@@ -95,13 +95,15 @@ class OrdersController extends Controller
     {
         // 只有创建订单的人才能查看订单的详细信息
         $this->authorize('own', $order);
-        
+
         $delay_load_relations = [
             'items.product',
             'items.product.skus_attributes',
             'items.product.attr_values',
             'items.product_sku',
         ];
+
+        // 这里只是取出单条order数据，故使用延迟加载
         return view('orders.show', ['order' => $order->load($delay_load_relations)]);
     }
 }

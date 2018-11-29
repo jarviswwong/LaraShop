@@ -42,7 +42,22 @@
                                                                <a target="_blank"
                                                                   href="{{ route('products.show', [$item->product_id]) }}">{{ $item->product->title }}</a>
                                                             </span>
-                                                            <span class="sku-title">{{ $item->product_sku->title }}</span>
+                                                            {{--<span class="sku-title">{{ $item->product_sku->title }}</span>--}}
+                                                            <div class="sku-attrs">
+                                                                @foreach($item->product->skus_attributes as $attribute)
+                                                                    <div class="attributes">
+                                                                        <span class="title">{{$attribute->name}}：</span>
+                                                                        <span class="value">
+                                                                            @foreach($attribute->attr_values as $attr_value)
+                                                                                @if(in_array($attr_value->symbol, $item->product_sku->attr_array))
+                                                                                    {{$attr_value->value}}
+                                                                                    @break
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td class="sku-price text-center">￥{{ $item->price }}</td>

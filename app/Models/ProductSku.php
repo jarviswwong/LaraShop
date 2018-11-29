@@ -16,6 +16,11 @@ class ProductSku extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function getAttrArrayAttribute()
+    {
+        return explode(';', $this->attributes['attributes']);
+    }
+
     /**
      * 加库存
      * @param $amount

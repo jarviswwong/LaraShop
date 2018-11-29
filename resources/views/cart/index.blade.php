@@ -52,8 +52,9 @@
                                             <span class="title">{{$attribute->name}}：</span>
                                             <span class="value">
                                                 @foreach($attribute->attr_values as $attr_value)
-                                                    @if(in_array($attr_value->symbol, explode(';', $item->product_sku->attributes)))
+                                                    @if(in_array($attr_value->symbol, $item->product_sku->attr_array))
                                                         {{$attr_value->value}}
+                                                        @break
                                                     @endif
                                                 @endforeach
                                             </span>

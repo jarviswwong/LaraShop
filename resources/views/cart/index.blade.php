@@ -65,6 +65,7 @@
                                 </td>
                                 <td>
                                     <input type="text" class="form-control input-sm amount"
+                                           data-id='{{ $item->product_sku->id }}'
                                            @if(!$item->product_sku->product->on_sale) disabled @endif name="amount"
                                            value="{{ $item->amount }}">
                                 </td>
@@ -75,6 +76,32 @@
                         @endforeach
                         </tbody>
                     </table>
+                    {{--订单额外信息--}}
+                    <div>
+                        <form class="form-horizontal" role="form" id="order-form">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">选择收货地址</label>
+                                <div class="col-sm-9 col-md-7">
+                                    <select class="form-control" name="address">
+                                        @foreach($addresses as $address)
+                                            <option value="{{ $address->id }}">{{ $address->full_address }} {{ $address->contact_name }} {{ $address->contact_phone }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">备注</label>
+                                <div class="col-sm-9 col-md-7">
+                                    <textarea name="remark" class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-3">
+                                    <button type="button" class="btn btn-primary btn-create-order">提交订单</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,6 +144,40 @@
             $('input[name=select][type=checkbox]:enabled').each(function () {
                 $(this).prop('checked', checked);
             });
+        });
+
+        // 提交订单事件
+        $('.btn-create-order').on('click', function () {
+            let data = {
+                'address_id': $('#order-form').find('select[name=address]').val(),
+                'remark': $('#order-form').find('textarea[name=remark]').val(),
+                'items': [],
+            };
+            _.each($('input[name=select]:checked'), function (order) {
+                let sku_id = $(order).val();
+                let amount = $('input.amount[data-id=' + sku_id + ']').val();
+                data.items.push({
+                    'sku_id': sku_id,
+                    'amount': amount,
+                });
+            });
+            axios.post('{{route('orders.store')}}', data)
+                .then(function (res) {
+                    swal('订单提交成功', '', 'success');
+                }, function (error) {
+                    if (error.response.status === 422) {
+                        let html = '<div>';
+                        _.each(error.response.data.errors, function (errors) {
+                            _.each(errors, function (error) {
+                                html += error + '<br>';
+                            })
+                        });
+                        html += '</div>';
+                        swal({title: $(html)[0], type: 'error'});
+                    } else {
+                        swal('服务器错误', '', 'error');
+                    }
+                });
         });
     </script>
 @endsection

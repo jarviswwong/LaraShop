@@ -90,4 +90,18 @@ class OrdersController extends Controller
 
         return view('orders.index', ['orders' => $orders]);
     }
+
+    public function show(Order $order)
+    {
+        // 只有创建订单的人才能查看订单的详细信息
+        $this->authorize('own', $order);
+        
+        $delay_load_relations = [
+            'items.product',
+            'items.product.skus_attributes',
+            'items.product.attr_values',
+            'items.product_sku',
+        ];
+        return view('orders.show', ['order' => $order->load($delay_load_relations)]);
+    }
 }

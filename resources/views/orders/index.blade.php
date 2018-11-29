@@ -42,7 +42,6 @@
                                                                <a target="_blank"
                                                                   href="{{ route('products.show', [$item->product_id]) }}">{{ $item->product->title }}</a>
                                                             </span>
-                                                            {{--<span class="sku-title">{{ $item->product_sku->title }}</span>--}}
                                                             <div class="sku-attrs">
                                                                 @foreach($item->product->skus_attributes as $attribute)
                                                                     <div class="attributes">
@@ -83,7 +82,8 @@
                                                             @endif
                                                         </td>
                                                         <td rowspan="{{ count($order->items) }}" class="text-center">
-                                                            <a class="btn btn-primary btn-xs" href="">查看订单</a>
+                                                            <a class="btn btn-primary btn-xs"
+                                                               href="{{ route('orders.show', ['order' => $order]) }}">查看订单</a>
                                                         </td>
                                                     @endif
                                                 </tr>

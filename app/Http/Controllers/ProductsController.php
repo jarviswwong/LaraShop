@@ -131,20 +131,4 @@ class ProductsController extends Controller
 
         return view('products.favorites', ['products' => $products]);
     }
-
-    /**
-     * test function
-     * @param Product $product
-     */
-    public function getSkuItems(Product $product)
-    {
-        $attr_values = $this->_getProductAttrValues($product);
-        dd(
-            $attr_values->pluck('items')
-                ->map(function ($item) {
-                    return $item->pluck('symbol');
-                })
-                ->toJson()
-        );
-    }
 }

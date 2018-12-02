@@ -49,4 +49,10 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 // Test Route
-Route::get('test/{product}', 'ProductsController@getSkuItems');
+Route::get('alipay', function () {
+    return app('alipay')->web([
+        'out_trade_no' => time(),
+        'total_amount' => '1',
+        'subject' => 'test subject - 测试',
+    ]);
+});

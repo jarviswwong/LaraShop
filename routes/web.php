@@ -45,14 +45,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('orders', 'OrdersController@store')->name('orders.store');
         Route::get('orders', 'OrdersController@index')->name('orders.index');
         Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
+        // Alipay支付路由
+        Route::get('payment/alipay/return', 'PaymentController@alipayReturn')->name('payment.alipay.return');
+        Route::get('payment/alipay/{order}', 'PaymentController@payByAlipay')->name('payment.alipay');
     });
 });
 
+Route::post('payment/alipay/notify', 'PaymentController@alipayNotify')->name('payment.alipay.notify');
+
 // Test Route
-Route::get('alipay', function () {
-    return app('alipay')->web([
-        'out_trade_no' => time(),
-        'total_amount' => '1',
-        'subject' => 'test subject - 测试',
-    ]);
-});

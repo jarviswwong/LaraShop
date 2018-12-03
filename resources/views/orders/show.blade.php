@@ -75,15 +75,19 @@
                         </div>
                         <div class="order-summary text-right">
                             <div class="total-amount">
-                                <span>订单总金额：</span>
+                                <span>订单总价：</span>
                                 <div class="value">￥{{ $order->total_amount }}</div>
                             </div>
-                            <div>
-                                <span>当前订单状态：</span>
+                            <div class="order-status">
+                                <span>订单状态：</span>
                                 <div class="value">
                                     @if($order->paid_at)
                                         @if($order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
-                                            已支付
+                                            @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+                                                已支付
+                                            @else
+                                                {{ \App\Models\Order::$shipStatusMap[$order->ship_status] }}
+                                            @endif
                                         @else
                                             {{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}
                                         @endif
@@ -94,7 +98,24 @@
                                     @endif
                                 </div>
                             </div>
-                            <!--支付按钮-->
+                            @if($order->ship_status !== \App\Models\Order::SHIP_STATUS_PENDING)
+                                <div class="ship_status">
+                                    <div>
+                                        <span>物流：</span>
+                                        <div class="value">{{ $order->ship_data['express_company'] }}</div>
+                                    </div>
+                                    <div>
+                                        <span>运单号：</span>
+                                        <div class="value">{{ $order->ship_data['express_no'] }}</div>
+                                    </div>
+                                </div>
+                                @if ($order->ship_status !== \App\Models\Order::SHIP_STATUS_RECEIVED)
+                                    <div class="received-button">
+                                        <button type="submit" class="btn btn-success btn-received">确认收货</button>
+                                    </div>
+                                @endif
+                            @endif
+                        <!--支付按钮-->
                             @if(!$order->paid_at && !$order->closed)
                                 <div class="payment-buttons">
                                     <a class="btn btn-primary btn-sm"
@@ -109,4 +130,31 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('scriptsAfterJs')
+    <script>
+        $(document).ready(function () {
+            $('.btn-received').on('click', function () {
+                swal({
+                    title: '确认收货吗？',
+                    text: '请收到商品后再确认收货，否则可能人财两空！',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    focusCancel: true,
+                }).then(function (result) {
+                    if (result.value) {
+                        axios.post('{{ route('orders.received', ['order' => $order->id]) }}')
+                            .then(function () {
+                                location.reload();
+                            });
+                    }
+                });
+            })
+        });
+    </script>
 @endsection

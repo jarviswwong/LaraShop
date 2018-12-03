@@ -68,7 +68,11 @@
                                                         <td rowspan="{{ count($order->items) }}" class="text-center">
                                                             @if($order->paid_at)
                                                                 @if($order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
-                                                                    已支付
+                                                                    @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+                                                                        已支付
+                                                                    @else
+                                                                        {{ \App\Models\Order::$shipStatusMap[$order->ship_status] }}
+                                                                    @endif
                                                                 @else
                                                                     {{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}
                                                                 @endif

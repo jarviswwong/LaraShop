@@ -7,7 +7,8 @@
 
 // 通用样式
 body {
-  font-family: Hiragino Sans GB, "Hiragino Sans GB", Helvetica, "Microsoft YaHei", Arial, sans-serif;
+  //font-family: Hiragino Sans GB, "Hiragino Sans GB", Helvetica, "Microsoft YaHei", Arial, sans-serif;
+  font-family: Verdana, Tahoma, Helvetica, Arial, "Microsoft YaHei";
 }
 
 // 修改swal样式
@@ -519,7 +520,6 @@ body {
 
   .order-summary {
     width: 50%;
-    font-family: Verdana, Tahoma, Helvetica, Arial;
 
     .total-amount {
       font-weight: bolder;
@@ -530,15 +530,24 @@ body {
       }
     }
 
+    .order-status {
+      font-weight: bolder;
+      font-size: 14px;
+    }
+
     .value {
       display: inline-block;
       width: 150px;
       padding-right: 20px;
     }
-  }
 
-  .payment-buttons {
-    margin-top: 10px;
-    padding-right: 10px;
+    .ship_status {
+      margin-top: 5px;
+    }
+
+    .payment-buttons, .received-button {
+      margin-top: 10px;
+      padding-right: 20px;
+    }
   }
 }

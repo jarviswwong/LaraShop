@@ -29,4 +29,5 @@ Route::group([
     $router->delete('product_skus/{product_id}/{id}', 'ProductSkusController@destroy');
     // Orders
     $router->get('orders', 'OrdersController@index')->name('admin.orders.index');
+    $router->get('orders/{order}', 'OrdersController@show')->name('admin.order.show');
 });

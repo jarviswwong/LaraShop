@@ -25,8 +25,8 @@
             <tr>
                 <td>收货地址</td>
                 <td colspan="3">
-                    {{ $order->address['full_address'] }} ; {{ $order->address['zip'] }}
-                    ; {{ $order->address['contact_name'] }} ; {{ $order->address['contact_phone'] }}
+                    {{ $order->address['contact_name'] }}, {{ $order->address['contact_phone'] }}
+                    , {{ $order->address['full_address'] }}, {{ $order->address['zip'] }}
                 </td>
             </tr>
             </tbody>

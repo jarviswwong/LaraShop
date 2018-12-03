@@ -62,7 +62,10 @@
                         <div class="order-info">
                             <div class="line">
                                 <div class="line-label">收货地址：</div>
-                                <div class="line-value">{{ join(' ', $order->address) }}</div>
+                                <div class="line-value">
+                                    {{ $order->address['contact_name'] }}, {{ $order->address['contact_phone'] }}
+                                    , {{ $order->address['full_address'] }}, {{ $order->address['zip'] }}
+                                </div>
                             </div>
                             <div class="line">
                                 <div class="line-label">订单备注：</div>

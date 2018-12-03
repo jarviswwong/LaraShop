@@ -17,3 +17,6 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 .env
+/config/pay.php
+/resources/wechat_pay
+

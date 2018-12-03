@@ -25,15 +25,77 @@
             <tr>
                 <td>收货地址</td>
                 <td colspan="3">
-                    {{ $order->address['full_address'] }} {{ $order->address['zip'] }} {{ $order->address['contact_name'] }} {{ $order->address['contact_phone'] }}
+                    {{ $order->address['full_address'] }} ; {{ $order->address['zip'] }}
+                    ; {{ $order->address['contact_name'] }} ; {{ $order->address['contact_phone'] }}
                 </td>
             </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-bordered" style="margin-top: 20px;">
             <tr>
-                <td rowspan="{{ $order->items->count() + 1 }}">商品列表</td>
-                <td>商品名称</td>
-                <td>商品属性</td>
-                <td>单价</td>
-                <td>数量</td>
+                <th>发货状态</th>
+                <th>物流公司</th>
+                <th>物流单号</th>
+                <th>操作</th>
+            </tr>
+            <tr>
+                <td width="10%" @if($order->ship_status == 'pending')
+                style="color: #DD2727; vertical-align: middle;"
+                    @else style="color:#00A65B; vertical-align: middle;"
+                        @endif>
+                    {{\App\Models\Order::$shipStatusMap[$order->ship_status]}}
+                </td>
+                <form class="form-inline" action="{{ route('admin.order.ship', ['order' => $order->id])}}"
+                      method="post">
+                    {{ csrf_field() }}
+                    @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+                        <td style="vertical-align: middle;">
+                            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
+                                 style="margin-bottom: 0;">
+                                <input type="text" class="form-control" name="express_company" placeholder="请输入物流公司">
+                                @if($errors->has('express_company'))
+                                    @foreach($errors->get('express_company') as $msg)
+                                        <span class="help-block">{{ $msg }}</span>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
+                                 style="margin-bottom: 0;">
+                                <input type="text" class="form-control" name="express_no" placeholder="请输入物流单号">
+                                @if($errors->has('express_no'))
+                                    @foreach($errors->get('express_no') as $msg)
+                                        <span class="help-block">{{ $msg }}</span>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </td>
+                        <td style="width: 10%; text-align: center">
+                            <input type="submit" class="btn btn-success" value="点击发货">
+                        </td>
+                    @else
+                        <td style="vertical-align: middle;">
+                            {{$order->ship_data['express_company']}}
+                        </td>
+                        <td style="vertical-align: middle;">
+                            {{$order->ship_data['express_no']}}
+                        </td>
+                        <td style="width: 10%; text-align: center">
+                            <input type="submit" class="btn btn-success" disabled="disabled" value="已发货">
+                        </td>
+                    @endif
+                </form>
+            </tr>
+        </table>
+
+        <table class="table table-bordered" style="margin-top: 20px;">
+            <tr>
+                <th>商品名称</th>
+                <th>商品属性</th>
+                <th>单价</th>
+                <th>数量</th>
             </tr>
             @foreach($order->items as $item)
                 <tr>
@@ -58,10 +120,10 @@
                 </tr>
             @endforeach
             <tr>
-                <td>订单金额：</td>
-                <td colspan="3">￥{{ $order->total_amount }}</td>
+                <td colspan="2" style="font-weight: 600;">订单金额：</td>
+                <td style="color: #DD2727;font-size: 18px;font-weight: 600;" colspan="2">
+                    ￥{{ $order->total_amount }}</td>
             </tr>
-            </tbody>
         </table>
     </div>
 </div>

@@ -2,13 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Exceptions\InvalidRequestException;
 use App\Models\Order;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
-use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
-use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
@@ -66,5 +66,32 @@ class OrdersController extends Controller
             });
         });
         return $grid;
+    }
+
+    // 发货
+    public function ship(Order $order, Request $request)
+    {
+        // 确保订单已付款
+        if (!$order->paid_at)
+            throw new InvalidRequestException('该订单未付款');
+        if ($order->ship_status !== Order::SHIP_STATUS_PENDING)
+            throw new InvalidRequestException('该订单已发货');
+
+        // $data is array
+        $data = $this->validate($request, [
+            'express_company' => 'required',
+            'express_no' => 'required',
+        ], [], [
+            'express_company' => '物流公司',
+            'express_no' => '物流单号',
+        ]);
+
+        // 'ship_data' field type is json
+        $order->update([
+            'ship_status' => Order::SHIP_STATUS_DELIVERED,
+            'ship_data' => $data,
+        ]);
+
+        return redirect()->back();
     }
 }

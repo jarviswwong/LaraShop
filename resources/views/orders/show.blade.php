@@ -133,6 +133,53 @@
             </div>
         </div>
     </div>
+
+    @if($order->extra && $order->extra['refund_count'] > 0)
+        {{--退款记录--}}
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>退款记录</h5>
+                    </div>
+                    <table class="table refund-record-table">
+                        <tr>
+                            <th>#</th>
+                            <th>申请退款时间</th>
+                            <th>退款理由</th>
+                            <th>退款结果</th>
+                        </tr>
+                        @for($index = 1; $index <= $order->extra['refund_count']; ++$index)
+                            <tr>
+                                <th>
+                                    {{ $index }}
+                                </th>
+                                <td>
+                                    {{ $order->extra['refund_index_'.$index]['refund_at'] }}
+                                </td>
+                                <td>
+                                    {{ $order->extra['refund_index_'.$index]['refund_reason'] }}
+                                </td>
+                                @if(array_key_exists('agree', $order->extra['refund_index_'.$index]))
+                                    <td class="{{ $order->extra['refund_index_'.$index]['agree'] ? 'success' : 'danger' }}">
+                                        <span style="font-weight: 600;">
+                                                {{ $order->extra['refund_index_'.$index]['agree'] ? '已同意' : '已拒绝' }}
+                                            </span>
+                                        <br/>理由：{{ $order->extra['refund_index_'.$index]['refund_handle_reason'] }}
+                                        <br/>处理时间：{{ $order->extra['refund_index_'.$index]['refund_handle_at'] }}
+                                    </td>
+                                @else
+                                    <td>
+                                        正在处理中，请稍后
+                                    </td>
+                                @endif
+                            </tr>
+                        @endfor
+                    </table>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @section('scriptsAfterJs')
@@ -171,7 +218,6 @@
                     cancelButtonText: '取消',
                     focusCancel: true,
                     showLoaderOnConfirm: true,
-                    allowOutsideClick: () => !swal.isLoading(),
                     inputValidator: (value) => {
                         return !value && '必须填写退款原因';
                     }
@@ -186,7 +232,7 @@
                                     });
                             });
                     }
-                })
+                });
             });
         });
     </script>

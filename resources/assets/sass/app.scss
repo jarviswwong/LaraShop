@@ -389,70 +389,79 @@ body {
 
 // 订单首页样式
 .orders-index-page {
-  .list-group-item {
-    font-size: 12px;
-    border: none;
-    padding: 0;
-    margin-bottom: 15px;
+  .orders-panel {
+    border-color: #ececec;
 
-    .panel {
-      margin: 0;
+    .list-group-item {
+      font-size: 12px;
+      border: none;
+      padding: 0;
+      margin-bottom: 15px;
 
-      .panel-body {
-        padding: 0;
-      }
-    }
-
-    .table {
-      margin: 0;
-
-      td[rowspan] {
-        border-left: 1px solid #ddd;
-      }
-    }
-
-    .product-info {
-      display: flex;
-      flex-direction: row;
-
-      .preview {
-        img {
-          max-width: 80px;
-          max-height: 80px;
-        }
-
-        //border: 1px solid #eee;
-        margin-right: 5px;
-      }
-
-      .product-title {
-        display: block;
-      }
-
-      .product-title > a {
-        color: #3c3c3c;
+      .panel {
+        margin: 0;
+        border-color: #ececec;
 
         &:hover {
-          text-decoration: none;
-          color: #ff4200;
+          border-color: #bfbfbf;
+        }
+
+        .panel-body {
+          padding: 0;
         }
       }
 
-      .sku-attrs {
-        color: #9e9e9e;
-        font-size: 12px;
+      .table {
+        margin: 0;
+
+        td[rowspan] {
+          border-left: 1px solid #ddd;
+        }
       }
-    }
 
-    .total-amount {
-      font-weight: bolder;
-    }
+      .product-info {
+        display: flex;
+        flex-direction: row;
 
-    .order-actions {
-      display: block;
+        .preview {
+          img {
+            max-width: 80px;
+            max-height: 80px;
+          }
 
-      & a {
-        min-width: 60px;
+          //border: 1px solid #eee;
+          margin-right: 5px;
+        }
+
+        .product-title {
+          display: block;
+        }
+
+        .product-title > a {
+          color: #3c3c3c;
+
+          &:hover {
+            text-decoration: none;
+            color: #ff4200;
+          }
+        }
+
+        .sku-attrs {
+          color: #9e9e9e;
+          font-size: 12px;
+        }
+      }
+
+      .total-amount {
+        font-weight: bolder;
+      }
+
+      .order-actions {
+        display: block;
+
+        & a {
+          min-width: 60px;
+        }
       }
     }
   }
@@ -563,6 +572,12 @@ body {
     .order-actions-buttons {
       margin-top: 10px;
       padding-right: 20px;
+    }
+  }
+
+  .refund-record-table {
+    td, th {
+      vertical-align: middle;
     }
   }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\OrderReviewed;
 use App\Exceptions\InvalidRequestException;
+use App\Http\Requests\Admin\HandleRefundRequest;
 use App\Http\Requests\ApplyRefundRequest;
 use App\Http\Requests\OrderRequest;
 use App\Http\Requests\SendReviewRequest;
@@ -177,7 +178,13 @@ class OrdersController extends Controller
         }
 
         $extra = $order->extra ?: [];
-        $extra['refund_reason'] = $request->input('reason');
+        $refund_count = array_key_exists('refund_count', $extra) ?: 0;
+        $extra['refund_count'] = $refund_count + 1;
+        if (!array_key_exists('refund_index_' . ($refund_count + 1), $extra)) {
+            $extra['refund_index_' . ($refund_count + 1)] = [];
+        }
+        $extra['refund_index_' . ($refund_count + 1)]['refund_reason'] = $request->input('reason');
+        $extra['refund_index_' . ($refund_count + 1)]['refund_at'] = Carbon::now()->toDateTimeString();
 
         $order->update([
             'refund_status' => Order::REFUND_STATUS_APPLIED,

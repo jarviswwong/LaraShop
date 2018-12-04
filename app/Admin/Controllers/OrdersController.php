@@ -3,8 +3,10 @@
 namespace App\Admin\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Http\Requests\Admin\HandleRefundRequest;
 use App\Models\Order;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
@@ -50,7 +52,9 @@ class OrdersController extends Controller
             return Order::$shipStatusMap[$value];
         });
         $grid->refund_status('退款状态')->display(function ($value) {
-            return Order::$refundStatusMap[$value];
+            $status = Order::$refundStatusMap[$value];
+            $route = route('admin.order.refund.show', ['order' => $this->id]);
+            return "<a href='$route'>$status</a>";
         });
         // 禁用创建订单
         $grid->disableCreateButton();
@@ -93,5 +97,52 @@ class OrdersController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function refundShow(Order $order, Content $content)
+    {
+        $refund_count = $order->extra['refund_count'] ?: 0;
+        $extra = $order->extra ?: [];
+        return $content
+            ->header('订单退款详情')
+            ->description('Order Refund Details')
+            ->body(view('admin.orders.refund', [
+                'order' => $order,
+                'refund_count' => $refund_count,
+                'extra' => $extra,
+            ]));
+    }
+
+    /**
+     * 管理员处理退款
+     *
+     * @param \App\Models\Order $order
+     * @param HandleRefundRequest $request
+     * @return \App\Models\Order
+     * @throws \App\Exceptions\InvalidRequestException
+     */
+    public function handleRefund(Order $order, HandleRefundRequest $request)
+    {
+        if ($order->refund_status !== Order::REFUND_STATUS_APPLIED) {
+            throw new InvalidRequestException('订单退款状态不正确');
+        }
+
+        if ($request->input('agree')) {
+            // 同意退款
+        } else {
+            // 不同意退款
+            $extra = ($order->extra ?: []);
+            $refund_count = $extra['refund_count'];
+            $extra['refund_index_' . $refund_count]['agree'] = false;
+            $extra['refund_index_' . $refund_count]['refund_handle_reason'] = $request->input('reason');
+            $extra['refund_index_' . $refund_count]['refund_handle_at'] = Carbon::now()->toDateTimeString();
+
+            $order->update([
+                // 注意，此处将状态改为未退款，方便用户再次申请
+                'refund_status' => Order::REFUND_STATUS_PENDING,
+                'extra' => $extra,
+            ]);
+        }
+        return $order;
     }
 }

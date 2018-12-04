@@ -4,7 +4,7 @@
 @section('content')
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
-            <div class="panel panel-default">
+            <div class="panel panel-default orders-panel">
                 <div class="panel-heading">订单列表</div>
                 <div class="panel-body">
                     <ul class="list-group">

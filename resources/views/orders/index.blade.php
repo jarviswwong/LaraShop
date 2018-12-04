@@ -86,8 +86,20 @@
                                                             @endif
                                                         </td>
                                                         <td rowspan="{{ count($order->items) }}" class="text-center">
-                                                            <a class="btn btn-primary btn-xs"
-                                                               href="{{ route('orders.show', ['order' => $order]) }}">查看订单</a>
+                                                            <div class="order-actions">
+                                                                <p>
+                                                                    <a class="btn btn-success btn-xs"
+                                                                       href="{{ route('orders.show', ['order' => $order]) }}">查看订单</a>
+                                                                </p>
+                                                                @if($order->ship_status === \App\Models\Order::SHIP_STATUS_RECEIVED)
+                                                                    <p>
+                                                                        <a class="btn {{ $order->reviewed ? 'btn-default' : 'btn-primary'}} btn-xs"
+                                                                           href="{{ route('orders.review.show', ['order' => $order]) }}">
+                                                                            {{ $order->reviewed ? '查看评价': '评价'}}
+                                                                        </a>
+                                                                    </p>
+                                                                @endif
+                                                            </div>
                                                         </td>
                                                     @endif
                                                 </tr>

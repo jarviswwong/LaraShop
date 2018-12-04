@@ -46,6 +46,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('orders', 'OrdersController@index')->name('orders.index');
         Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
         Route::post('orders/{order}/received', 'OrdersController@received')->name('orders.received'); // 收货路由
+        Route::get('orders/{order}/review', 'OrdersController@review')->name('orders.review.show'); // 评价路由
+        Route::post('orders/{order}/review', 'OrdersController@sendReview')->name('orders.review.store');
         // Alipay支付路由
         Route::get('payment/alipay/return', 'PaymentController@alipayReturn')->name('payment.alipay.return');
         Route::get('payment/alipay/{order}', 'PaymentController@payByAlipay')->name('payment.alipay');

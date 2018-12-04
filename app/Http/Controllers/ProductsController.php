@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Models\OrderItem;
 use App\Models\Product;
 use function foo\func;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ class ProductsController extends Controller
     /**
      * 获取商品下SKU并格式化:
      * "[symbols;] => [price, stock]"
+     *
      * @param Product $product
      * @return mixed
      */
@@ -92,12 +94,22 @@ class ProductsController extends Controller
             })
             ->toJson();
 
+        // 加载评论
+        $reviews = OrderItem::query()
+            ->with(['order.user', 'product_sku'])
+            ->where('product_id', $product->id)
+            ->whereNotNull('reviewed_at')
+            ->orderBy('reviewed_at', 'desc')
+            ->limit(10)
+            ->get();
+
         return view('products.show',
             [
                 'product' => $product,
                 'sku_items' => $sku_items,
                 'symbolArr' => $symbolArr,
                 'favored' => $favored,
+                'reviews' => $reviews,
             ]
         );
     }
@@ -122,6 +134,7 @@ class ProductsController extends Controller
 
     /**
      * 收藏商品界面
+     *
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */

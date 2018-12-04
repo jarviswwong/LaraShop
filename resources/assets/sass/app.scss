@@ -322,6 +322,12 @@ body {
     .tab-content {
       border: 1px solid #eee;
       padding: 20px;
+
+      #product-reviews-tab {
+        td.rating {
+          color: #FF0036;
+        }
+      }
     }
   }
 }
@@ -441,6 +447,14 @@ body {
     .total-amount {
       font-weight: bolder;
     }
+
+    .order-actions {
+      display: block;
+
+      & a {
+        min-width: 60px;
+      }
+    }
   }
 }
 
@@ -550,5 +564,112 @@ body {
       margin-top: 10px;
       padding-right: 20px;
     }
+  }
+}
+
+// 订单评价样式
+.orders-review-show-page {
+  .vertical-middle {
+    vertical-align: middle;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: row;
+
+    .preview {
+      img {
+        max-width: 80px;
+        max-height: 80px;
+      }
+
+      //border: 1px solid #eee;
+      margin-right: 5px;
+    }
+
+    .product-title {
+      display: block;
+
+      & > a {
+        color: #3c3c3c;
+
+        &:hover {
+          color: #f60;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .attributes {
+      color: #999;
+      font-size: 12px;
+    }
+  }
+
+  .rating-star-yes {
+    color: gold;
+    font-size: 150%;
+  }
+
+  .rating-star-no {
+    color: lightgrey;
+    font-size: 150%;
+    margin-left: -2%;
+  }
+
+  .rate-area {
+    float: left;
+    border-style: none;
+    margin: 0 auto;
+    padding: 0;
+
+    &:not(:checked) {
+      & > input {
+        position: absolute;
+        top: -9999px;
+        clip: rect(0, 0, 0, 0);
+      }
+
+      & > label {
+        float: right;
+        width: 1em;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        line-height: 1.2;
+        color: lightgrey;
+        font-size: 150%;
+
+        &:before {
+          content: '★ ';
+        }
+      }
+
+      & > label:hover, & > label:hover ~ label {
+        color: gold;
+      }
+    }
+
+    & > input:checked ~ label {
+      color: gold;
+    }
+
+    & > label:active {
+      position: relative;
+      top: 2px;
+      left: 2px;
+    }
+
+    & > input:checked + label:hover,
+    & > input:checked + label:hover ~ label,
+    & > input:checked ~ label:hover,
+    & > input:checked ~ label:hover ~ label,
+    & > label:hover ~ input:checked ~ label {
+      color: gold;
+    }
+  }
+
+  textarea {
+    border-radius: 0px;
   }
 }

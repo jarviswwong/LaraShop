@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         // 注入Alipay对象到容器中
         $this->app->singleton('alipay', function () {
             $config = config('pay.alipay');
-            $config['notify_url'] = 'http://requestbin.fullcontact.com/1ml0zqz1';
+            $config['notify_url'] = 'http://requestbin.fullcontact.com/s54eq9s5';
             $config['return_url'] = route('payment.alipay.return');
             if (app()->environment() !== 'production') {
                 $config['mode'] = 'dev';

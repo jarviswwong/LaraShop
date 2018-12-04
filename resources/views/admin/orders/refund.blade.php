@@ -14,7 +14,7 @@
                         {{ $extra['refund_index_'.$index]['refund_at'] }}
                     </span>
                     <h3 class="timeline-header">
-                        <a href="#">客户：{{ $order->user->name }}</a>
+                        <a href="#">客户 {{ $order->user->name }}</a> 申请退款
                     </h3>
 
                     <div class="timeline-body">
@@ -23,7 +23,7 @@
                     </div>
                     @if(!array_key_exists('agree',  $extra['refund_index_'.$index]))
                         <div class="timeline-footer">
-                            <button class="btn btn-success btn-xs">同意退款</button>
+                            <button class="btn btn-success btn-xs btn-agree-refund">同意退款</button>
                             <button class="btn btn-danger btn-xs btn-disagree-refund">拒绝退款</button>
                         </div>
                     @endif
@@ -46,9 +46,16 @@
                                     font-weight: 600; font-size: 16px;">
                                 {{ $extra['refund_index_'.$index]['agree'] ? '已同意退款' : '已拒绝退款' }}
                             </span>
-                            <div>
-                                {{ $extra['refund_index_'.$index]['refund_handle_reason'] }}
-                            </div>
+                            @if(array_key_exists('refund_handle_reason', $extra['refund_index_'.$index]))
+                                <div class="refund_handle_reason">
+                                    {{ $extra['refund_index_'.$index]['refund_handle_reason'] }}
+                                </div>
+                            @endif
+                            @if($order->refund_no)
+                                <div class="refund_no">
+                                    退款订单号：{{ $order->refund_no }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </li>
@@ -93,7 +100,7 @@
                             _token: LA.token,
                         }),
                         contentType: 'application/json',  // 请求的数据格式为 JSON
-                        success: function (data) {  // 返回成功时会调用这个函数
+                        success: function () {  // 返回成功时会调用这个函数
                             swal({
                                 title: '已拒绝该退款申请',
                                 type: 'success'
@@ -102,6 +109,46 @@
                                 location.reload();
                             });
                         }
+                    });
+                }
+            });
+        });
+
+        $('.btn-agree-refund').on('click', function () {
+            swal({
+                title: '确定要将款项退还给用户？',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                focusCancel: true,
+            }).then(function (result) {
+                if (result.value) {
+                    $.ajax({
+                        url: '{{ route('admin.orders.refund.handle', [$order->id]) }}',
+                        type: 'POST',
+                        data: JSON.stringify({   // 将请求变成 JSON 字符串
+                            agree: true,  // 拒绝申请
+                            _token: LA.token,
+                        }),
+                        contentType: 'application/json',  // 请求的数据格式为 JSON
+                        success: function () {  // 返回成功时会调用这个函数
+                            swal({
+                                title: '已经将退款申请提交给支付平台接口',
+                                type: 'success'
+                            }).then(function () {
+                                location.reload();
+                            });
+                        },
+                        error: function (error) {
+                            swal({
+                                title: '支付平台服务器故障',
+                                text: error.responseJSON.message,
+                                type: 'error',
+                            });
+                        },
                     });
                 }
             });

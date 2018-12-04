@@ -32,63 +32,67 @@
             </tbody>
         </table>
 
-        <table class="table table-bordered" style="margin-top: 20px;">
-            <tr>
-                <th>发货状态</th>
-                <th>物流公司</th>
-                <th>物流单号</th>
-                <th>操作</th>
-            </tr>
-            <tr>
-                <td width="10%" @if($order->ship_status == 'pending')
-                style="color: #DD2727; vertical-align: middle;"
-                    @else style="color:#00A65B; vertical-align: middle;"
-                        @endif>
-                    {{\App\Models\Order::$shipStatusMap[$order->ship_status]}}
-                </td>
-                <form class="form-inline" action="{{ route('admin.order.ship', ['order' => $order->id])}}"
-                      method="post">
-                    {{ csrf_field() }}
-                    @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
-                        <td style="vertical-align: middle;">
-                            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
-                                 style="margin-bottom: 0;">
-                                <input type="text" class="form-control" name="express_company" placeholder="请输入物流公司">
-                                @if($errors->has('express_company'))
-                                    @foreach($errors->get('express_company') as $msg)
-                                        <span class="help-block">{{ $msg }}</span>
-                                    @endforeach
-                                @endif
-                            </div>
-                        </td>
-                        <td style="vertical-align: middle;">
-                            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
-                                 style="margin-bottom: 0;">
-                                <input type="text" class="form-control" name="express_no" placeholder="请输入物流单号">
-                                @if($errors->has('express_no'))
-                                    @foreach($errors->get('express_no') as $msg)
-                                        <span class="help-block">{{ $msg }}</span>
-                                    @endforeach
-                                @endif
-                            </div>
-                        </td>
-                        <td style="width: 10%; text-align: center">
-                            <input type="submit" class="btn btn-success" value="点击发货">
-                        </td>
-                    @else
-                        <td style="vertical-align: middle;">
-                            {{$order->ship_data['express_company']}}
-                        </td>
-                        <td style="vertical-align: middle;">
-                            {{$order->ship_data['express_no']}}
-                        </td>
-                        <td style="width: 10%; text-align: center">
-                            <input type="submit" class="btn btn-success" disabled="disabled" value="已发货">
-                        </td>
-                    @endif
-                </form>
-            </tr>
-        </table>
+        {{--退款未成功前均可发货--}}
+        @if($order->refund_status !== \App\Models\Order::REFUND_STATUS_SUCCESS)
+            <table class="table table-bordered" style="margin-top: 20px;">
+                <tr>
+                    <th>发货状态</th>
+                    <th>物流公司</th>
+                    <th>物流单号</th>
+                    <th>操作</th>
+                </tr>
+                <tr>
+                    <td width="10%" @if($order->ship_status == 'pending')
+                    style="color: #DD2727; vertical-align: middle;"
+                        @else style="color:#00A65B; vertical-align: middle;"
+                            @endif>
+                        {{\App\Models\Order::$shipStatusMap[$order->ship_status]}}
+                    </td>
+                    <form class="form-inline" action="{{ route('admin.order.ship', ['order' => $order->id])}}"
+                          method="post">
+                        {{ csrf_field() }}
+                        @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+                            <td style="vertical-align: middle;">
+                                <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
+                                     style="margin-bottom: 0;">
+                                    <input type="text" class="form-control" name="express_company"
+                                           placeholder="请输入物流公司">
+                                    @if($errors->has('express_company'))
+                                        @foreach($errors->get('express_company') as $msg)
+                                            <span class="help-block">{{ $msg }}</span>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
+                                     style="margin-bottom: 0;">
+                                    <input type="text" class="form-control" name="express_no" placeholder="请输入物流单号">
+                                    @if($errors->has('express_no'))
+                                        @foreach($errors->get('express_no') as $msg)
+                                            <span class="help-block">{{ $msg }}</span>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </td>
+                            <td style="width: 10%; text-align: center">
+                                <input type="submit" class="btn btn-success" value="点击发货">
+                            </td>
+                        @else
+                            <td style="vertical-align: middle;">
+                                {{$order->ship_data['express_company']}}
+                            </td>
+                            <td style="vertical-align: middle;">
+                                {{$order->ship_data['express_no']}}
+                            </td>
+                            <td style="width: 10%; text-align: center">
+                                <input type="submit" class="btn btn-success" disabled="disabled" value="已发货">
+                            </td>
+                        @endif
+                    </form>
+                </tr>
+            </table>
+        @endif
 
         <table class="table table-bordered" style="margin-top: 20px;">
             <tr>

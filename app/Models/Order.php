@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid;
 
 /**
  * App\Models\Order
@@ -132,6 +133,20 @@ class Order extends Model
                 }
             }
         });
+    }
+
+    /**
+     * 生成Uuid不重复的字符串
+     * @return string
+     * @throws \Exception
+     */
+    public static function getAvailableRefundNo()
+    {
+        do {
+            $refund_no = Uuid::uuid4()->getHex();
+        } while (Order::query()->where('refund_no', $refund_no)->exists());
+
+        return $refund_no;
     }
 
     public function user()

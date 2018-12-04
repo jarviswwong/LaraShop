@@ -13,7 +13,7 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         订单号：{{ $order->no }}
-                                        <span class="pull-right">{{ $order->created_at->format('Y-m-d H:i:s') }}</span>
+                                        <span class="pull-right order-created-at">{{ $order->created_at->format('Y-m-d H:i:s') }}</span>
                                     </div>
                                     <div class="panel-body">
                                         <table class="table">

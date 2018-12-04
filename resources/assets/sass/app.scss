@@ -406,6 +406,14 @@ body {
           border-color: #bfbfbf;
         }
 
+        .panel-heading {
+          background: #f1f1f1 !important;
+
+          & > .order-created-at {
+            font-weight: 700;
+          }
+        }
+
         .panel-body {
           padding: 0;
         }

@@ -163,9 +163,14 @@
                                 @if(array_key_exists('agree', $order->extra['refund_index_'.$index]))
                                     <td class="{{ $order->extra['refund_index_'.$index]['agree'] ? 'success' : 'danger' }}">
                                         <span style="font-weight: 600;">
-                                                {{ $order->extra['refund_index_'.$index]['agree'] ? '已同意' : '已拒绝' }}
-                                            </span>
-                                        <br/>理由：{{ $order->extra['refund_index_'.$index]['refund_handle_reason'] }}
+                                            {{ $order->extra['refund_index_'.$index]['agree'] ? '已同意，请等待退款到账' : '已拒绝' }}
+                                        </span>
+                                        @if(array_key_exists('refund_handle_reason', $order->extra['refund_index_'.$index]))
+                                            <br/>{{ $order->extra['refund_index_'.$index]['refund_handle_reason'] }}
+                                        @endif
+                                        @if($order->refund_no)
+                                            退款订单号：{{ $order->refund_no }}
+                                        @endif
                                         <br/>处理时间：{{ $order->extra['refund_index_'.$index]['refund_handle_at'] }}
                                     </td>
                                 @else

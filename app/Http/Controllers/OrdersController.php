@@ -178,7 +178,7 @@ class OrdersController extends Controller
         }
 
         $extra = $order->extra ?: [];
-        $refund_count = array_key_exists('refund_count', $extra) ?: 0;
+        $refund_count = array_key_exists('refund_count', $extra) ? $extra['refund_count'] : 0;
         $extra['refund_count'] = $refund_count + 1;
         if (!array_key_exists('refund_index_' . ($refund_count + 1), $extra)) {
             $extra['refund_index_' . ($refund_count + 1)] = [];

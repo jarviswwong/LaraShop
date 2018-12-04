@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Exceptions\InternalException;
 use App\Exceptions\InvalidRequestException;
 use App\Http\Requests\Admin\HandleRefundRequest;
 use App\Models\Order;
@@ -117,8 +118,9 @@ class OrdersController extends Controller
      * 管理员处理退款
      *
      * @param \App\Models\Order $order
-     * @param HandleRefundRequest $request
+     * @param \App\Http\Requests\Admin\HandleRefundRequest $request
      * @return \App\Models\Order
+     * @throws \App\Exceptions\InternalException
      * @throws \App\Exceptions\InvalidRequestException
      */
     public function handleRefund(Order $order, HandleRefundRequest $request)
@@ -127,12 +129,21 @@ class OrdersController extends Controller
             throw new InvalidRequestException('订单退款状态不正确');
         }
 
+        $extra = ($order->extra ?: []);
+        $refund_count = $extra['refund_count'];
         if ($request->input('agree')) {
             // 同意退款
+            // 先调用支付平台退款逻辑
+            $this->_refundOrderFromPaymentInstrument($order);
+
+            $extra['refund_index_' . $refund_count]['agree'] = true;
+            $extra['refund_index_' . $refund_count]['refund_handle_at'] = Carbon::now()->toDateTimeString();
+
+            $order->update([
+                'extra' => $extra,
+            ]);
         } else {
             // 不同意退款
-            $extra = ($order->extra ?: []);
-            $refund_count = $extra['refund_count'];
             $extra['refund_index_' . $refund_count]['agree'] = false;
             $extra['refund_index_' . $refund_count]['refund_handle_reason'] = $request->input('reason');
             $extra['refund_index_' . $refund_count]['refund_handle_at'] = Carbon::now()->toDateTimeString();
@@ -144,5 +155,48 @@ class OrdersController extends Controller
             ]);
         }
         return $order;
+    }
+
+    /**
+     * 调用支付接口进行退款
+     *
+     * @param \App\Models\Order $order
+     * @throws \App\Exceptions\InternalException
+     */
+    protected function _refundOrderFromPaymentInstrument(Order $order)
+    {
+        switch ($order->payment_method) {
+            case "wechat":
+                // 微信支付暂留
+                break;
+            case "alipay":
+                $refund_no = Order::getAvailableRefundNo();
+                // 调用支付宝实例的refund方法
+                $ret = app('alipay')->refund([
+                    'out_trade_no' => $order->no,
+                    'refund_amount' => $order->total_amount,
+                    'out_request_no' => $refund_no,
+                ]);
+
+                if ($ret->sub_code) {
+                    $extra = $order->extra;
+                    $extra['refund_index_' . $extra['refund_count']]['refund_failed_code'] = $ret->sub_code;
+
+                    $order->update([
+                        'refund_no' => $refund_no,
+                        'refund_status' => Order::REFUND_STATUS_FAILED,
+                        'extra' => $extra,
+                    ]);
+                } else {
+                    $order->update([
+                        'refund_no' => $refund_no,
+                        'refund_status' => Order::REFUND_STATUS_SUCCESS,
+                    ]);
+                }
+                break;
+            default:
+                throw new InternalException('未知订单支付方式：' . $order->payment_method);
+                break;
+        }
     }
 }

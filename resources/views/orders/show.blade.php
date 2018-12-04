@@ -112,21 +112,21 @@
                                         <div class="value">{{ $order->ship_data['express_no'] }}</div>
                                     </div>
                                 </div>
-                                @if ($order->ship_status !== \App\Models\Order::SHIP_STATUS_RECEIVED)
-                                    <div class="received-button">
-                                        <button type="submit" class="btn btn-success btn-received">确认收货</button>
-                                    </div>
-                                @endif
                             @endif
-                        <!--支付按钮-->
-                            @if(!$order->paid_at && !$order->closed)
-                                <div class="payment-buttons">
+                            <div class="order-actions-buttons">
+                                @if(!$order->paid_at && !$order->closed)
                                     <a class="btn btn-primary btn-sm"
                                        href="{{ route('payment.alipay', ['order' => $order->id]) }}">支付宝支付</a>
                                     <a class="btn btn-success btn-sm"
                                        href="#">微信支付</a>
-                                </div>
-                            @endif
+                                @endif
+                                @if($order->paid_at && $order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
+                                    <button type="button" class="btn btn-danger btn-apply-refund">申请退款</button>
+                                    @if ($order->ship_status === \App\Models\Order::SHIP_STATUS_DELIVERED)
+                                        <button type="button" class="btn btn-success btn-received">确认收货</button>
+                                    @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,7 +157,37 @@
                             });
                     }
                 });
-            })
+            });
+
+            $('.btn-apply-refund').on('click', function () {
+                swal({
+                    title: '请输入退款原因',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    focusCancel: true,
+                    showLoaderOnConfirm: true,
+                    allowOutsideClick: () => !swal.isLoading(),
+                    inputValidator: (value) => {
+                        return !value && '必须填写退款原因';
+                    }
+                }).then((result) => {
+                    if (result.value) {
+                        axios.post('{{ route('orders.refund.apply', ['order' => $order]) }}',
+                            {reason: result.value})
+                            .then(() => {
+                                swal('申请退款成功', '', 'success')
+                                    .then(() => {
+                                        location.reload();
+                                    });
+                            });
+                    }
+                })
+            });
         });
     </script>
 @endsection

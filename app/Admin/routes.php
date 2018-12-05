@@ -9,7 +9,6 @@ Route::group([
     'namespace' => config('admin.route.namespace'),
     'middleware' => config('admin.route.middleware'),
 ], function (Router $router) {
-
     $router->get('/', 'HomeController@index');
     $router->get('users', 'UsersController@index');
 
@@ -20,6 +19,7 @@ Route::group([
     $router->get('products/{id}/edit', 'ProductsController@edit');
     $router->put('products/{id}', 'ProductsController@update');
     $router->delete('products/{id}', 'ProductsController@destroy');
+
     // Products SKU
     $router->get('product_skus/{product_id}', 'ProductSkusController@index')->name('admin.product_skus.index');
     $router->get('product_skus/{product_id}/create', 'ProductSkusController@create');
@@ -27,10 +27,15 @@ Route::group([
     $router->get('product_skus/{product_id}/{id}/edit', 'ProductSkusController@edit');
     $router->put('product_skus/{product_id}/{id}', 'ProductSkusController@update');
     $router->delete('product_skus/{product_id}/{id}', 'ProductSkusController@destroy');
+
     // Orders
     $router->get('orders', 'OrdersController@index')->name('admin.orders.index');
     $router->get('orders/{order}', 'OrdersController@show')->name('admin.order.show');
     $router->post('orders/{order}/ship', 'OrdersController@ship')->name('admin.order.ship');
     $router->get('orders/{order}/refund', 'OrdersController@refundShow')->name('admin.order.refund.show');
-    $router->post('orders/{order}/refund/handle', 'OrdersController@handleRefund')->name('admin.orders.refund.handle'); // 管理员处理退款
+    // 管理员处理退款
+    $router->post('orders/{order}/refund/handle', 'OrdersController@handleRefund')->name('admin.orders.refund.handle');
+
+    // 优惠券
+    $router->get('coupon_codes', 'CouponCodesController@index')->name('admin.coupon.index');
 });

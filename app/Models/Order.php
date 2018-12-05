@@ -137,6 +137,7 @@ class Order extends Model
 
     /**
      * 生成Uuid不重复的字符串
+     *
      * @return string
      * @throws \Exception
      */
@@ -157,5 +158,15 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * 代表一个订单暂时只能用一个优惠码
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function couponCode()
+    {
+        return $this->belongsTo(CouponCode::class);
     }
 }

@@ -38,10 +38,15 @@ class CloseOrder implements ShouldQueue
         // 用数据库事务 执行sql
         \DB::transaction(function () {
             $this->order->update(['closed' => true]);
+            // 恢复库存
             $this->order->items()
                 ->each(function ($item) {
                     $item->product_sku->addStock($item->amount);
                 });
+            // 恢复优惠券使用次数
+            if ($this->order->couponCode) {
+                $this->order->couponCode()->changeUsed(false);
+            }
         });
     }
 }

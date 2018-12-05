@@ -81,6 +81,14 @@
                                 <span>订单总价：</span>
                                 <div class="value">￥{{ $order->total_amount }}</div>
                             </div>
+                            {{--优惠信息显示--}}
+                            @if ($order->coupon_code_id)
+                                <div class="coupon-info">
+                                    <div class="value">
+                                        {{ $order->couponCode->coupon_rule }}
+                                    </div>
+                                </div>
+                            @endif
                             <div class="order-status">
                                 <span>订单状态：</span>
                                 <div class="value">

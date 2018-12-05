@@ -27,6 +27,11 @@ class OrderService
      */
     public function store(User $user, UserAddress $address, $remark, $items, CouponCode $couponCode = null)
     {
+        if ($couponCode) {
+            // 最开始先校验，否则不执行后续的数据库事务
+            $couponCode->checkCodeAvailable($user);
+        }
+
         $order = \DB::transaction(function () use ($user, $address, $remark, $items, $couponCode) {
             // 记录本次地址使用的时间
             $address->update(['last_used_at' => Carbon::now()]);
@@ -70,7 +75,7 @@ class OrderService
             // 进行折扣
             if ($couponCode) {
                 // 先校验优惠券是否可用，不可用会抛出异常
-                $couponCode->checkCodeAvailable($total_amount);
+                $couponCode->checkCodeAvailable($user, $total_amount);
 
                 // 关联优惠券到订单
                 $order->couponCode()->associate($couponCode);

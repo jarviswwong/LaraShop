@@ -553,6 +553,11 @@ body {
   .order-summary {
     width: 50%;
 
+    .coupon-info {
+      color: #00A65B;
+      font-weight: 600;
+    }
+
     .total-amount {
       font-weight: bolder;
       font-size: 14px;

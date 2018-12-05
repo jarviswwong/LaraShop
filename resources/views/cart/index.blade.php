@@ -227,6 +227,7 @@
                     $('#btn-cancel-coupon').show();
                     $('#btn-check-coupon').hide();
                 }, (error) => {
+                    $('input[name=coupon_code]').val('');
                     if (error.response.status === 404) {
                         swal('该优惠码不存在', '', 'error');
                     } else if (error.response.status === 403) {

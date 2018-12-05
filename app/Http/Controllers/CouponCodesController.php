@@ -18,7 +18,7 @@ class CouponCodesController extends Controller
         }
 
         // 此处是校验优惠码，不需要传参
-        $couponCode->checkCodeAvailable();
+        $couponCode->checkCodeAvailable($request->user());
 
         return $couponCode;
     }

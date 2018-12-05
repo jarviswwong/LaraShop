@@ -178,6 +178,7 @@
                 'address_id': address.val(),
                 'remark': $('#order-form').find('textarea[name=remark]').val(),
                 'items': [],
+                'coupon_code': $('input[name=coupon_code]').val(),  // 获取优惠码
             };
             _.each(orders, function (order) {
                 let sku_id = $(order).val();
@@ -203,6 +204,8 @@
                         });
                         html += '</div>';
                         swal({title: $(html)[0], type: 'error'});
+                    } else if (error.response.status === 403) {
+                        swal(error.response.data.msg, '', 'error');
                     } else {
                         swal('服务器错误', '', 'error');
                     }

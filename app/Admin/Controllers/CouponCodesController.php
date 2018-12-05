@@ -88,8 +88,6 @@ class CouponCodesController extends Controller
         $grid->name('名称');
         $grid->code('优惠码');
         $grid->coupon_rule('减免规则');
-        $grid->total('优惠券总数');
-        $grid->used('已用数目');
         $grid->column('usage', '用量')->display(function ($value) {
             return "{$this->used} / {$this->total}";
         });
@@ -145,27 +143,30 @@ class CouponCodesController extends Controller
         $form->text('name', '名称')->rules('required');
         $form->text('description', '描述')->rules('required');
         // 不填写优惠码，就在saving中由系统自动生成
-        $form->text('code', '优惠码')->rules(function ($form) {
-            // 如果ID存在，则为编辑模式
-            if ($id = $form->model()->id) {
-                return 'nullable|unique:coupon_codes,code,' . $id . ',id';
-            } else {
-                return 'nullable|unique:coupon_codes,code';
-            }
-        });
+        $form->text('code', '优惠码')
+            ->placeholder('优惠码可不填写，会自动生成')
+            ->rules(function ($form) {
+                // 如果ID存在，则为编辑模式
+                if ($id = $form->model()->id) {
+                    return 'nullable|unique:coupon_codes,code,' . $id . ',id';
+                } else {
+                    return 'nullable|unique:coupon_codes,code';
+                }
+            });
         $form->radio('type', '类型')->options(CouponCode::$typeMap)->rules('required');
         // 通过类型type来校验value
         $form->text('value', '优惠数值')->rules(function ($form) {
-            if ($form->type === CouponCode::TYPE_FIXED) {
+            if (request('type') === CouponCode::TYPE_FIXED) {
                 return 'required|numeric|min:0.01';
-            } else {
+            } else if (request('type') === CouponCode::TYPE_PERCENT) {
                 return 'required|numeric|between:1,99';
             }
+            return '';
         });
         $form->text('total', '总数')->rules('required|numeric|min:1');
         $form->text('min_amount', '最低金额')->rules('required|numeric|min:0');
-        $form->datetime('not_before', '开始时间')->rules('date');
-        $form->datetime('not_after', '结束时间')->rules('date|after:not_before', ['not_after.after' => '结束时间必须晚于开始时间']);
+        $form->datetime('not_before', '开始时间')->rules('nullable|date');
+        $form->datetime('not_after', '结束时间')->rules('nullable|date|after:not_before', ['not_after.after' => '结束时间必须晚于开始时间']);
         $form->radio('enabled', '启用')->options(['1' => '是', '0' => '否']);
 
         $form->tools(function (Form\Tools $tools) {

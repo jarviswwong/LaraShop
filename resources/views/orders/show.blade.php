@@ -169,7 +169,7 @@
                                             <br/>{{ $order->extra['refund_index_'.$index]['refund_handle_reason'] }}
                                         @endif
                                         @if($order->refund_no)
-                                            退款订单号：{{ $order->refund_no }}
+                                            <br/>退款订单号：{{ $order->refund_no }}
                                         @endif
                                         <br/>处理时间：{{ $order->extra['refund_index_'.$index]['refund_handle_at'] }}
                                     </td>

@@ -56,6 +56,9 @@ Route::group(['middleware' => 'auth'], function () {
         // Alipay支付路由
         Route::get('payment/alipay/return', 'PaymentController@alipayReturn')->name('payment.alipay.return');
         Route::get('payment/alipay/{order}', 'PaymentController@payByAlipay')->name('payment.alipay');
+
+        // 优惠券路由
+        Route::post('coupon_codes/verify', 'CouponCodesController@verify')->name('coupon.verify');
     });
 });
 

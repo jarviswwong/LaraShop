@@ -16,6 +16,26 @@ $factory->define(App\Models\Order::class, function (Faker $faker) {
         $coupon->changeUsed();
     }
 
+    $refund_count = random_int(1, 3);
+    $refund_extra = collect([
+        'refund_count' => $refund_count,
+    ]);
+    for ($index = 1; $index <= $refund_count; ++$index) {
+        $item = collect([
+            'refund_reason' => $faker->sentence,
+            'refund_at' => $faker->dateTime->format('Y-m-d'),
+            'refund_handle_at' => $faker->dateTime->format('Y-m-d'),
+        ]);
+        if ($index !== $refund_count) {
+            $item->put('agree', false);
+            $item->put('refund_handle_reason', $faker->sentence);
+            $refund_extra->put('refund_index_' . $index, $item);
+        } else {
+            $item->put('agree', true);
+            $refund_extra->put('refund_index_' . $index, $item);
+        }
+    }
+
     return [
         'address' => [
             'full_address' => $address->full_address,
@@ -37,10 +57,7 @@ $factory->define(App\Models\Order::class, function (Faker $faker) {
             'express_company' => $faker->company,
             'express_no' => $faker->uuid,
         ],
-        'extra' => $refund ? [
-            'refund_count' => 1,
-            'refund_index_1' => ['refund_reason' => $faker->sentence]
-        ] : [],
+        'extra' => $refund ? $refund_extra->toArray() : null,
         'user_id' => $user->id,
         'coupon_code_id' => $coupon ? $coupon->id : null,
     ];

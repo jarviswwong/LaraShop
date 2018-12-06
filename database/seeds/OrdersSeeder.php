@@ -10,7 +10,7 @@ class OrdersSeeder extends Seeder
     public function run()
     {
         // 重置自增
-        DB::statement('ALTER TABLE coupon_codes AUTO_INCREMENT=1');
+        DB::statement('ALTER TABLE orders AUTO_INCREMENT=1');
 
         // 获取 Faker 实例
         $faker = app(Faker\Generator::class);

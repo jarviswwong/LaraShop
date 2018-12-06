@@ -10,27 +10,6 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    /**
-     * 获取商品下SKU并格式化:
-     * "[symbols;] => [price, stock]"
-     *
-     * @param Product $product
-     * @return mixed
-     */
-    public function _getProductSkuItems(Product $product)
-    {
-        return $product->skus
-            ->mapWithKeys(function ($item) {
-                return [
-                    $item['attributes'] => [
-                        'sku_id' => $item['id'],
-                        'price' => $item['price'],
-                        'stock' => $item['stock']
-                    ]
-                ];
-            });
-    }
-
     public function index(Request $request)
     {
         $builder = Product::where('on_sale', true);
@@ -80,19 +59,8 @@ class ProductsController extends Controller
             $favored = boolval($user->favoriteProducts()->find($product->id));
         }
 
-        $sku_items = $this->_getProductSkuItems($product);
-        $symbolArr = $product->attr_values
-            ->map(function ($item) {
-                return ['attr_id' => $item->attr_id, 'symbol' => $item->symbol];
-            })
-            ->groupBy('attr_id')
-            ->sortBy(function ($item, $key) {
-                return $key;
-            })->values()
-            ->map(function ($item) {
-                return $item->pluck('symbol');
-            })
-            ->toJson();
+        $sku_items = $product->getProductSkuItems();
+        $symbolArr = $product->getProductSymbols("json");
 
         // 加载评论
         $reviews = OrderItem::query()

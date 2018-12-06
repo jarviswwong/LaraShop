@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\ProductAttrValue;
 use App\Models\ProductSku;
 use App\Http\Controllers\Controller;
-use App\Models\ProductSkuAttributes;
+use App\Models\ProductSkuAttribute;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -150,7 +150,7 @@ class ProductSkusController extends Controller
         });
 
         // Get All the attributes from this product
-        $attributes = ProductSkuAttributes::query()
+        $attributes = ProductSkuAttribute::query()
             ->where('product_id', $product_id)->get()
             ->mapWithKeys(function ($item) {
                 return [$item['id'] => $item['name']];

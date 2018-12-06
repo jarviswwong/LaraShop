@@ -24,7 +24,7 @@ use Illuminate\Support\Str;
  * @property-read mixed|string $image_url
  * @property-read mixed $max_price
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductSku[] $skus
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductSkuAttributes[] $skus_attributes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProductSkuAttribute[] $skus_attributes
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Product newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Product query()
@@ -54,6 +54,48 @@ class Product extends Model
 
     protected $appends = ['max_price'];
 
+    // 获取该商品下由attr_value的symbol字段组成的数组
+    public function getProductSymbols($returnType)
+    {
+        $result = $this->attr_values->sortBy('attr_id')
+            ->groupBy('attr_id')
+            ->map(function ($item) {
+                return $item->pluck('symbol');
+            })->values();
+
+        switch ($returnType) {
+            case "json":
+                return $result->toJson();
+                break;
+            case "array":
+                return $result->toArray();
+                break;
+            default:
+                return $result;
+                break;
+        }
+    }
+
+    /**
+     * 获取商品下SKU并格式化:
+     * "[symbols;] => [price, stock]"
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getProductSkuItems()
+    {
+        return $this->skus
+            ->mapWithKeys(function ($item) {
+                return [
+                    $item['attributes'] => [
+                        'sku_id' => $item['id'],
+                        'price' => $item['price'],
+                        'stock' => $item['stock']
+                    ]
+                ];
+            });
+    }
+
     public function skus()
     {
         return $this->hasMany(ProductSku::class);
@@ -61,7 +103,7 @@ class Product extends Model
 
     public function skus_attributes()
     {
-        return $this->hasMany(ProductSkuAttributes::class);
+        return $this->hasMany(ProductSkuAttribute::class);
     }
 
     public function attr_values()
@@ -69,12 +111,7 @@ class Product extends Model
         return $this->hasMany(ProductAttrValue::class);
     }
 
-    /**
-     * This function turn ImageUrl into full links
-     * When the blade template use '$product->image_url', this function will be called.
-     * $this->image === $this->attributes['image']
-     * @return mixed|string
-     */
+    // 获取图片的完整URL
     public function getImageUrlAttribute()
     {
         if (Str::startsWith($this->image, ['http://', 'https://'])) {

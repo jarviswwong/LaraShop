@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Product $product
- * @property-read \App\Models\ProductSkuAttributes $skus_attribute
+ * @property-read \App\Models\ProductSkuAttribute $skus_attribute
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProductAttrValue newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProductAttrValue newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\ProductAttrValue query()
@@ -41,6 +41,6 @@ class ProductAttrValue extends Model
      */
     public function skus_attribute()
     {
-        return $this->belongsTo(ProductSkuAttributes::class, 'attr_id', 'id');
+        return $this->belongsTo(ProductSkuAttribute::class, 'attr_id', 'id');
     }
 }

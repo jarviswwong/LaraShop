@@ -6,13 +6,9 @@ class ProductsSeeder extends Seeder
 {
     public function run()
     {
-        $products = factory(\App\Models\Product::class, 30)->create();
-        foreach ($products as $product) {
-            $product_attributes = factory(\App\Models\ProductSkuAttributes::class, 3)
-                ->create(['product_id' => $product->id]);
-            $skus = factory(\App\Models\ProductSku::class, 5)
-                ->create(['product_id' => $product->id, 'attributes' => '{}']);
-            $product->update(['price' => $skus->min('price')]);
-        }
+        // 重置自增
+        DB::statement('ALTER TABLE products AUTO_INCREMENT=1');
+
+        factory(\App\Models\Product::class, 20)->create();
     }
 }

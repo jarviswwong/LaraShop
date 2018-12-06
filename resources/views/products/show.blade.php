@@ -152,6 +152,8 @@
                                 .then(function () {
                                     window.location.href = '{{route('login')}}';
                                 });
+                        } else if (error.response.status === 400) {
+                            swal(error.response.data.msg, '', 'error');
                         }
                         // '422'代表表单校验错误
                         else if (error.response.status === 422) {
@@ -167,7 +169,7 @@
                                 type: 'error',
                             });
                         } else {
-                            swal('服务器错误', '', 'error');
+                            swal('服务器错误', error.response.data.msg, 'error');
                         }
                     });
                 } else {

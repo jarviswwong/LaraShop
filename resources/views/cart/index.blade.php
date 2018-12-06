@@ -166,11 +166,11 @@
 
             // 前端校验
             if (orders.length === 0) {
-                swal('错误', '请先勾选需要下单商品', 'error');
+                swal('请先勾选需要下单商品', '', 'warning');
                 return;
             }
             if (!address.val()) {
-                swal('错误', '请勾选收货地址', 'error');
+                swal('请勾选收货地址', '<a href="{{ route('user_addresses.create') }}">没有收货地址？点我添加</a>', 'warning');
                 return;
             }
 

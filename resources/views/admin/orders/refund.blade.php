@@ -51,7 +51,7 @@
                                     {{ $extra['refund_index_'.$index]['refund_handle_reason'] }}
                                 </div>
                             @endif
-                            @if($order->refund_no)
+                            @if($order->refund_no && $extra['refund_index_'.$index]['agree'] === true)
                                 <div class="refund_no">
                                     退款订单号：{{ $order->refund_no }}
                                 </div>

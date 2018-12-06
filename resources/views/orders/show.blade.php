@@ -176,7 +176,8 @@
                                         @if(array_key_exists('refund_handle_reason', $order->extra['refund_index_'.$index]))
                                             <br/>{{ $order->extra['refund_index_'.$index]['refund_handle_reason'] }}
                                         @endif
-                                        @if($order->refund_no)
+                                        {{--有退款单号且卖家同意退款的退款批次--}}
+                                        @if($order->refund_no && $order->extra['refund_index_'.$index]['agree'] === true)
                                             <br/>退款订单号：{{ $order->refund_no }}
                                         @endif
                                         <br/>处理时间：{{ $order->extra['refund_index_'.$index]['refund_handle_at'] }}

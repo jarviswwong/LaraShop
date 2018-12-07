@@ -48,48 +48,44 @@
                             @endif>
                         {{\App\Models\Order::$shipStatusMap[$order->ship_status]}}
                     </td>
-                    <form class="form-inline" action="{{ route('admin.order.ship', ['order' => $order->id])}}"
-                          method="post">
-                        {{ csrf_field() }}
-                        @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
-                            <td style="vertical-align: middle;">
-                                <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
-                                     style="margin-bottom: 0;">
-                                    <input type="text" class="form-control" name="express_company"
-                                           placeholder="请输入物流公司">
-                                    @if($errors->has('express_company'))
-                                        @foreach($errors->get('express_company') as $msg)
-                                            <span class="help-block">{{ $msg }}</span>
-                                        @endforeach
-                                    @endif
-                                </div>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
-                                     style="margin-bottom: 0;">
-                                    <input type="text" class="form-control" name="express_no" placeholder="请输入物流单号">
-                                    @if($errors->has('express_no'))
-                                        @foreach($errors->get('express_no') as $msg)
-                                            <span class="help-block">{{ $msg }}</span>
-                                        @endforeach
-                                    @endif
-                                </div>
-                            </td>
-                            <td style="width: 10%; text-align: center">
-                                <input type="submit" class="btn btn-success" value="点击发货">
-                            </td>
-                        @else
-                            <td style="vertical-align: middle;">
-                                {{$order->ship_data['express_company']}}
-                            </td>
-                            <td style="vertical-align: middle;">
-                                {{$order->ship_data['express_no']}}
-                            </td>
-                            <td style="width: 10%; text-align: center">
-                                <input type="submit" class="btn btn-success" disabled="disabled" value="已发货">
-                            </td>
-                        @endif
-                    </form>
+                    @if($order->ship_status === \App\Models\Order::SHIP_STATUS_PENDING)
+                        <td style="vertical-align: middle;">
+                            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
+                                 style="margin-bottom: 0;">
+                                <input type="text" class="form-control" name="express_company"
+                                       placeholder="请输入物流公司">
+                                @if($errors->has('express_company'))
+                                    @foreach($errors->get('express_company') as $msg)
+                                        <span class="help-block">{{ $msg }}</span>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <div class="form-group {{ $errors->has('express_company') ? 'has-error' : '' }}"
+                                 style="margin-bottom: 0;">
+                                <input type="text" class="form-control" name="express_no" placeholder="请输入物流单号">
+                                @if($errors->has('express_no'))
+                                    @foreach($errors->get('express_no') as $msg)
+                                        <span class="help-block">{{ $msg }}</span>
+                                    @endforeach
+                                @endif
+                            </div>
+                        </td>
+                        <td style="width: 10%; text-align: center">
+                            <button class="btn btn-success btn-deliver">点击发货</button>
+                        </td>
+                    @else
+                        <td style="vertical-align: middle;">
+                            {{$order->ship_data['express_company']}}
+                        </td>
+                        <td style="vertical-align: middle;">
+                            {{$order->ship_data['express_no']}}
+                        </td>
+                        <td style="width: 10%; text-align: center">
+                            <button class="btn btn-success" disabled="disabled">已发货</button>
+                        </td>
+                    @endif
                 </tr>
             </table>
         @endif
@@ -131,3 +127,55 @@
         </table>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $(this).on('click', 'button.btn-deliver', function (e) {
+            let express_company = $('input[name=express_company]').val();
+            let express_no = $('input[name=express_no]').val();
+            if (!express_company || !express_no) {
+                swal('请先填写物流信息', '', 'warning');
+                return;
+            }
+
+            swal({
+                title: '确认发货？',
+                text: '请注意物流信息是否填写正确',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                focusCancel: true,
+            }).then(function (result) {
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ route('admin.order.ship', ['order' => $order->id])}}",
+                        type: 'POST',
+                        data: JSON.stringify({
+                            _token: LA.token,
+                            express_company: express_company,
+                            express_no: express_no,
+                        }),
+                        contentType: 'application/json',
+                        success: function () {
+                            swal({
+                                title: '物流信息提交成功',
+                                type: 'success'
+                            }).then(function () {
+                                $.pjax.reload('#pjax-container');
+                            });
+                        },
+                        error: function (error) {
+                            swal({
+                                title: '服务器错误',
+                                type: 'error',
+                            });
+                        },
+                    });
+                }
+            });
+        });
+    });
+</script>

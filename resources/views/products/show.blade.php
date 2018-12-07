@@ -38,16 +38,14 @@
                                 <div class="skus">
                                     <label>{{$attribute->name}}</label>
                                     <div class="btn-group attr-group" data-id="{{$key}}" data-toggle="buttons">
-                                        @foreach($product->attr_values as $attr_value)
-                                            @if($attr_value->attr_id == $attribute->id)
-                                                <label class="btn btn-default sku-btn"
-                                                       data-symbol="{{ $attr_value->symbol }}" data-toggle="tooltip">
-                                                    <div class="wrapper">
-                                                        <input type="radio" name="skus" autocomplete="off"
-                                                               value="{{ $attr_value->symbol }}"> {{ $attr_value->value }}
-                                                    </div>
-                                                </label>
-                                            @endif
+                                        @foreach($attribute->attr_values()->orderBy('order')->get() as $attr_value)
+                                            <label class="btn btn-default sku-btn"
+                                                   data-symbol="{{ $attr_value->symbol }}" data-toggle="tooltip">
+                                                <div class="wrapper">
+                                                    <input type="radio" name="skus" autocomplete="off"
+                                                           value="{{ $attr_value->symbol }}"> {{ $attr_value->value }}
+                                                </div>
+                                            </label>
                                         @endforeach
                                     </div>
                                 </div>

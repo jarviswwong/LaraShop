@@ -158,11 +158,11 @@ class ProductSkusController extends Controller
 
         $form->display('', '商品名称')
             ->with(function () use ($product_id) {
-                $title = Product::where('id', $product_id)->pluck('title')->first();
-                return $title;
+                return Product::where('id', $product_id)->first()->title;
             });
 
-        $form->text('title', 'SKU 名称')->rules('required');
+        // 如果名称没有填写，会根据属性自动生成
+        $form->display('title', 'SKU 名称')->placeholder('如留空将根据填写的属性自动生成');
         $form->text('description', 'SKU 描述')->rules('required');
         $form->decimal('price', 'SKU 单价')->rules('required|min:0', [
             'min' => '价格不能设置为负数'
@@ -178,12 +178,17 @@ class ProductSkusController extends Controller
         if ($oldAttrValues)
             $oldAttrValuesArray = $this->_getExistedFormData($oldAttrValues->getAttribute('attributes'), $product_id);
         else
-            $oldAttrValuesArray = null;
+            $oldAttrValuesArray = [];
 
         // 动态添加form
         foreach ($attributes as $id => $name) {
+            // 保持健壮性，万一属性被意外删除
+            if (!array_key_exists($id, $oldAttrValuesArray)) {
+                $oldAttrValuesArray[$id] = "";
+            }
+
             $form->text('attr_' . $id, $name)
-                ->default($oldAttrValuesArray ? $oldAttrValuesArray[$id] : '')
+                ->default($oldAttrValuesArray[$id])
                 ->rules('required', [
                     'required' => $name . '必须填写!',
                 ]);
@@ -198,19 +203,26 @@ class ProductSkusController extends Controller
 
         // form表单保存前执行
         $form->saving(function (Form $form) use ($product_id, $attr_ids, $ignoreArr) {
-            // 更新product_attr_value表
             $attributes = '';
+            $sku_title = "";
+
+            // 更新product_attr_value表
             foreach ($attr_ids as $key => $id) {
+                $value = request('attr_' . $id);
                 $str = $this->_setAttrValue([
                     'product_id' => $product_id,
-                    'value' => request('attr_' . $id),
+                    'value' => $value,
                     'attr_id' => $id
                 ]);
                 $attributes .= $str . ';';
+                $sku_title .= $value . ' ';
             }
 
             $form->model()->product_id = $product_id;
             $form->model()->attributes = rtrim($attributes, ';');
+
+            // 自动生成SKU名称
+            $form->title = rtrim($sku_title, ' ');
         });
 
         $form->saved(function () use ($product_id) {

@@ -28,7 +28,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProductAttrValue extends Model
 {
-    protected $fillable = ['value'];
+    protected $fillable = ['value', 'order'];
+
+    protected $primaryKey = 'symbol';
 
     public function product()
     {
@@ -37,6 +39,7 @@ class ProductAttrValue extends Model
 
     /**
      * 此处注意：必须指定外键名称，否则会自动认为关联的外键名为: product_sku_attributes_id
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function skus_attribute()

@@ -80,7 +80,8 @@ class ProductsController extends Controller
             $actions->disableView();
             $actions->disableDelete();
 
-            $actions->append('<a href="' . route('admin.product_skus.index', $actions->getKey()) . '"><i class="fa fa-shopping-cart"></i></a>');
+            $actions->append('<a href="' . route('admin.product_skus.index', $actions->getKey()) . '"><i class="fa fa-shopping-cart"></i></a>
+                              <a href="' . route('admin.productAttrValues.index', $actions->getKey()) . '"><i class="fa fa-tags"></i></a>');
         });
 
 

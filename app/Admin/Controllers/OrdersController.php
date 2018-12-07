@@ -52,7 +52,7 @@ class OrdersController extends Controller
         $grid->ship_status('物流状态')->display(function ($value) {
             return Order::$shipStatusMap[$value];
         });
-        $grid->refund_status('退款状态')->display(function ($value) {
+        $grid->refund_status('退款状态')->sortable()->display(function ($value) {
             $status = Order::$refundStatusMap[$value];
             $route = route('admin.order.refund.show', ['order' => $this->id]);
             return "<a href='$route'>$status</a>";

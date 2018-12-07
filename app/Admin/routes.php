@@ -28,6 +28,11 @@ Route::group([
     $router->put('product_skus/{product_id}/{id}', 'ProductSkusController@update');
     $router->delete('product_skus/{product_id}/{id}', 'ProductSkusController@destroy');
 
+    // 商品属性
+    $router->get('product_attr_values/{product}', 'ProductAttrValuesController@index')->name('admin.productAttrValues.index');
+    $router->post('product_attr_values/change_order/{product}', 'ProductAttrValuesController@changeOrder')->name('admin.productAttrValues.changeOrder');
+    $router->post('product_attr_values/create', 'ProductAttrValuesController@create')->name('admin.productAttrValues.create');
+
     // Orders
     $router->get('orders', 'OrdersController@index')->name('admin.orders.index');
     $router->get('orders/{order}', 'OrdersController@show')->name('admin.order.show');

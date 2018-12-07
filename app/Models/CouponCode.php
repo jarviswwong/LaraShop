@@ -103,14 +103,17 @@ class CouponCode extends Model
         // 检查用户是否能使用这张优惠券
         $is_coupon_used = Order::query()->where('user_id', $user->id)
             ->where('coupon_code_id', $this->id)
+            // 这个代表一个括号
             ->where(function ($query) {
                 // 未付款且未关闭的订单
-                $query->whereNull('paid_at')
-                    ->where('closed', false);
-            })->orWhere(function ($query) {
-                // 已付款且未退款成功的订单
-                $query->whereNotNull('paid_at')
-                    ->where('refund_status', '!=', Order::REFUND_STATUS_SUCCESS);
+                $query->where(function ($query) {
+                    $query->whereNull('paid_at')
+                        ->where('closed', false);
+                })->orWhere(function ($query) {
+                    // 已付款且未退款成功的订单
+                    $query->whereNotNull('paid_at')
+                        ->where('refund_status', '!=', Order::REFUND_STATUS_SUCCESS);
+                });
             })->exists();
         if ($is_coupon_used) {
             throw new CouponCodeUnavailableException('你已经使用过这张优惠券了');

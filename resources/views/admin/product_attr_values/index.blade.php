@@ -28,6 +28,12 @@
                                                 symbol:{{ $attr_value->symbol }}
                                                 &nbsp;&nbsp;&nbsp;
                                                 order:{{ $attr_value->order }}
+                                                <span class="pull-right dd-nodrag">
+                                                    <a href="javascript:void(0);" data-id="1"
+                                                       class="tree_branch_delete">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </span>
                                             </div>
                                         </li>
                                     @endforeach
@@ -114,6 +120,41 @@
         $('.btn-reload').on('click', function () {
             $.pjax.reload('#pjax-container');
             toastr.success('刷新成功');
+        });
+
+        $('.tree_branch_delete').on('click', function () {
+            let symbol = $(this).parents('li').data('symbol');
+            swal({
+                title: '确定要删除此商品属性？',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(function (result) {
+                if (result.value) {
+                    $.ajax({
+                        method: 'post',
+                        url: '/admin/product_attr_values/' + symbol + '/destroy',
+                        data: {
+                            _method: 'delete',
+                            _token: LA.token,
+                        },
+                        success: function (data) {
+                            $.pjax.reload('#pjax-container');
+                            toastr.success(data.msg, '', 'success');
+                        },
+                        error: function (error) {
+                            if (error.status === 404)
+                                swal('删除失败', '请勿重复操作', 'error');
+                            else {
+                                swal('服务器错误', '', 'error');
+                            }
+                        }
+                    });
+                }
+            });
         });
     });
 </script>

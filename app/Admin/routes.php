@@ -29,9 +29,10 @@ Route::group([
     $router->delete('product_skus/{product_id}/{id}', 'ProductSkusController@destroy');
 
     // 商品属性
-    $router->get('product_attr_values/{product}', 'ProductAttrValuesController@index')->name('admin.productAttrValues.index');
+    $router->get('product_attr_values/{product}/show', 'ProductAttrValuesController@index')->name('admin.productAttrValues.index');
     $router->post('product_attr_values/change_order/{product}', 'ProductAttrValuesController@changeOrder')->name('admin.productAttrValues.changeOrder');
     $router->post('product_attr_values/create', 'ProductAttrValuesController@create')->name('admin.productAttrValues.create');
+    $router->delete('product_attr_values/{attrValue}/destroy', 'ProductAttrValuesController@destroy')->name('admin.productAttrValues.destroy');
 
     // Orders
     $router->get('orders', 'OrdersController@index')->name('admin.orders.index');

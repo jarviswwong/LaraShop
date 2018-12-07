@@ -248,7 +248,7 @@ class ProductSkusController extends Controller
                     ->mapWithKeys(function ($item) {
                         return [$item['attr_id'] => $item['value']];
                     });
-                return $result;
+                return $result->all();
             }
         }
     }

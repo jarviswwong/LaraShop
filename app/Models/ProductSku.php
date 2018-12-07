@@ -51,6 +51,7 @@ class ProductSku extends Model
 
     /**
      * 加库存
+     *
      * @param $amount
      * @throws InternalException
      */
@@ -65,6 +66,7 @@ class ProductSku extends Model
 
     /**
      * 减库存操作，防止库存减到负数，引起超售
+     *
      * @param $amount
      * @return int
      * @throws InternalException
@@ -79,5 +81,20 @@ class ProductSku extends Model
             ->where('id', $this->id)
             ->where('stock', '>=', $amount)
             ->decrement('stock', $amount);
+    }
+
+    // 判断sku是否存在某属性值
+    public function hasAttrValue($symbol)
+    {
+        $attributes = $this->attributes['attributes'];
+        if ($attributes) {
+            $array = explode(';', $attributes);
+            if (in_array($symbol, $array)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 }

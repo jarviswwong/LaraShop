@@ -65,5 +65,22 @@ class ProductAttrValuesController extends Controller
         $attr_value->product()->associate($request->input('product_id'));
         $attr_value->skus_attribute()->associate($request->input('attr_id'));
         $attr_value->save();
+
+        return redirect()->back();
+    }
+
+    public function destroy(ProductAttrValue $attrValue)
+    {
+        if ($attrValue) {
+            if ($attrValue->delete()) {
+                // 先不删除相关的SKU，因为商品没有做快照
+//                foreach ($attrValue->product->skus as $sku) {
+//                    if ($sku->hasAttrValue($attrValue->symbol)) {
+//                        $sku->delete();
+//                    }
+//                }
+                return response()->json(['msg' => '删除该商品属性成功']);
+            }
+        }
     }
 }

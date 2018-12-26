@@ -7,7 +7,7 @@ use App\Notifications\OrderPaidNotification;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendOrderPaidMail
+class SendOrderPaidMail implements ShouldQueue
 {
     public function __construct()
     {

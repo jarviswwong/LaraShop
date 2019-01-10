@@ -331,6 +331,12 @@ body {
       border: 1px solid #eee;
       padding: 20px;
 
+      #product-detail-tab {
+        img {
+          width: 100%;
+        }
+      }
+
       #product-reviews-tab {
         td.rating {
           color: #FF0036;

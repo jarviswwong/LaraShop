@@ -52,7 +52,7 @@ class Category extends Model
     public function getAncestorsAttribute()
     {
         return Category::query()
-            ->whereIn('id', $this->attributes['path_ids'])
+            ->whereIn('id', $this->path_ids)
             ->orderBy('level')
             ->get();
     }
@@ -60,7 +60,7 @@ class Category extends Model
     // 访问器 获取祖先分类名称并以 '-' 分隔
     public function getFullNameAttribute()
     {
-        return $this->attributes['ancestors']
+        return $this->ancestors
             ->pluck('name')
             ->push($this->name)
             ->implode(' - ');

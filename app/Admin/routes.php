@@ -12,7 +12,7 @@ Route::group([
     $router->get('/', 'HomeController@index');
     $router->get('users', 'UsersController@index');
 
-    // Products route
+    // 商品
     $router->get('products', 'ProductsController@index');
     $router->get('products/create', 'ProductsController@create');
     $router->post('products', 'ProductsController@store');
@@ -20,7 +20,7 @@ Route::group([
     $router->put('products/{id}', 'ProductsController@update');
     $router->delete('products/{id}', 'ProductsController@destroy');
 
-    // Products SKU
+    // 商品 SKU
     $router->get('product_skus/{product_id}', 'ProductSkusController@index')->name('admin.product_skus.index');
     $router->get('product_skus/{product_id}/create', 'ProductSkusController@create');
     $router->post('product_skus/{product_id}', 'ProductSkusController@store');
@@ -34,7 +34,7 @@ Route::group([
     $router->post('product_attr_values/create', 'ProductAttrValuesController@create')->name('admin.productAttrValues.create');
     $router->delete('product_attr_values/{attrValue}/destroy', 'ProductAttrValuesController@destroy')->name('admin.productAttrValues.destroy');
 
-    // Orders
+    // 订单
     $router->get('orders', 'OrdersController@index')->name('admin.orders.index');
     $router->get('orders/{order}', 'OrdersController@show')->name('admin.order.show');
     $router->post('orders/{order}/ship', 'OrdersController@ship')->name('admin.order.ship');
@@ -49,4 +49,13 @@ Route::group([
     $router->get('coupon_codes/{id}/edit', 'CouponCodesController@edit')->name('admin.coupon.edit');
     $router->put('coupon_codes/{id}', 'CouponCodesController@update');
     $router->delete('coupon_codes/{id}', 'CouponCodesController@destroy');
+
+    // 商品类目
+    $router->get('categories', 'CategoriesController@index');
+    $router->get('categories/create', 'CategoriesController@create');
+    $router->get('categories/{id}/edit', 'CategoriesController@edit');
+    $router->post('categories', 'CategoriesController@store');
+    $router->put('categories/{id}', 'CategoriesController@update');
+    $router->delete('categories/{id}', 'CategoriesController@destroy');
+    $router->get('api/categories', 'CategoriesController@apiIndex');
 });

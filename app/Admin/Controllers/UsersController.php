@@ -77,7 +77,8 @@ class UsersController extends Controller
 
         // grid Row Actions
         $grid->actions(function ($actions) {
-
+            $actions->disableEdit();
+            $actions->disableView();
         });
 
         // grid tools Actions

@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
 --
--- Host: localhost    Database: larashop
+-- Host: 127.0.0.1    Database: larashop
 -- ------------------------------------------------------
 -- Server version	5.7.22-0ubuntu18.04.1
 
@@ -21,7 +21,7 @@
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,'2018-12-06 14:39:07'),(2,0,6,'系统管理','fa-tasks',NULL,NULL,'2018-12-06 14:42:36'),(3,2,7,' 管理员','fa-users','auth/users',NULL,'2018-12-06 14:42:36'),(4,2,8,'角色','fa-user','auth/roles',NULL,'2018-12-06 14:42:36'),(5,2,9,'权限','fa-ban','auth/permissions',NULL,'2018-12-06 14:42:36'),(6,2,10,'菜单','fa-bars','auth/menu',NULL,'2018-12-06 14:42:36'),(7,2,11,'操作日志','fa-history','auth/logs',NULL,'2018-12-06 14:42:36'),(8,0,2,'用户管理','fa-user','/users','2018-12-06 14:40:16','2018-12-06 14:40:21'),(9,0,3,'商品管理','fa-product-hunt','/products','2018-12-06 14:41:12','2018-12-06 14:41:16'),(10,0,4,'订单管理','fa-first-order','/orders','2018-12-06 14:41:43','2018-12-06 14:41:47'),(11,0,5,'优惠券管理','fa-credit-card-alt','/coupon_codes','2018-12-06 14:42:32','2018-12-06 14:42:36');
+INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,'2018-12-06 14:39:07'),(2,0,7,'系统管理','fa-tasks',NULL,NULL,'2019-01-15 20:10:33'),(3,2,8,' 管理员','fa-users','auth/users',NULL,'2019-01-15 20:10:33'),(4,2,9,'角色','fa-user','auth/roles',NULL,'2019-01-15 20:10:33'),(5,2,10,'权限','fa-ban','auth/permissions',NULL,'2019-01-15 20:10:33'),(6,2,11,'菜单','fa-bars','auth/menu',NULL,'2019-01-15 20:10:33'),(7,2,12,'操作日志','fa-history','auth/logs',NULL,'2019-01-15 20:10:33'),(8,0,2,'用户管理','fa-user','/users','2018-12-06 14:40:16','2018-12-06 14:40:21'),(9,0,4,'商品管理','fa-product-hunt','/products','2018-12-06 14:41:12','2019-01-15 20:10:33'),(10,0,5,'订单管理','fa-first-order','/orders','2018-12-06 14:41:43','2019-01-15 20:10:33'),(11,0,6,'优惠券管理','fa-credit-card-alt','/coupon_codes','2018-12-06 14:42:32','2019-01-15 20:10:33'),(12,0,3,'商品类目管理','fa-th-list','/categories','2019-01-15 20:10:17','2019-01-15 20:10:33');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,4 +103,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-06  9:18:01
+-- Dump completed on 2019-01-15 12:53:05

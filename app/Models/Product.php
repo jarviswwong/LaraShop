@@ -111,6 +111,11 @@ class Product extends Model
         return $this->hasMany(ProductAttrValue::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     // 获取图片的完整URL
     public function getImageUrlAttribute()
     {

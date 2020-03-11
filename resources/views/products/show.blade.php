@@ -117,18 +117,21 @@
         $(document).ready(function () {
             // myData用于缓存
             let selected = [],
-                myStock = {},
-                myPrice = {};
+                myData = {};
 
             // 所有属性值的symbol组成的对象
             let keys = JSON.parse('{!! $symbolArr !!}');
 
+            // console.log(keys);
+
             // skuItems对象
             let sku_items = JSON.parse('{!! $sku_items !!}');
 
+            // console.log(sku_items);
+
             // 加入购物车按钮点击事件
             $('.btn-add-to-cart').on('click', function () {
-                let selectedStr = arrToStr(selected);
+                let selectedStr = selected.join(";");
                 // 判断用户是否完整选择了商品信息
                 if (selected.length === keys.length
                     &&
@@ -215,55 +218,27 @@
 
             // 每个skuItem的点击事件
             $("label.sku-btn").on('click', function (e) {
+                selected = [];
                 if (!$(this).hasClass('disabled')) {
-                    let btnGroup = $(this).parent('.attr-group');
-                    let id = $(btnGroup).data('id');
-                    if (!$(this).hasClass('active')) {
-                        selected[id] = $(this).data('symbol');
-                    } else {
-                        // 防止bootstrap自动添加active
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        $(this).removeClass('active').removeClass('focus');
-                        selected[id] = '';
-                    }
-                    // console.log(selected);
-                    // 先重置其他不可点击按钮
-                    resetSkuItemsStatus();
-                    changeStockAndPrice(selected);
-                    checkSkuItemsStatus(selected);
-                } else {
-                    // 防止防止bootstrap的btn-group事件
+                    // 阻止bootstrap的默认方法
                     e.preventDefault();
                     e.stopImmediatePropagation();
+                    $(this).toggleClass("active focus").siblings().removeClass("active focus");
+                    $("div.attr-group").each(function (index, el) {
+                        let value = $(el).children(".active").data("symbol");
+                        selected.push(value || "");
+                    });
+                    console.log(selected);
+                    checkSkuItemsStatus(selected);
                 }
             });
 
-            // 先创建缓存数组
-            function init() {
-                keys.forEach(function (key) {
-                    key.forEach(function (item) {
-                        getStock(item + "");
-                    });
-                });
-            }
-
-            // 数组转成用';'分割的字符串
-            function arrToStr(array) {
-                let attributes = '';
-                for (let i = 0; i < keys.length; ++i) {
-                    if (array[i]) {
-                        attributes += (array[i] + ';');
-                    }
-                }
-                return attributes.slice(0, attributes.length - 1);
-            }
-
-            // 改变库存数与价格
+            // 改变库存数与售价
             function changeStockAndPrice(selected) {
-                let attributes = arrToStr(selected);
-                $('span.price-value').text(myPrice.hasOwnProperty(attributes) ? myPrice[attributes] : $('span.price-value').data('origin'));
-                $('.stock > span').text(myStock.hasOwnProperty(attributes) ? myStock[attributes] : 0);
+                let key = selected.join(";");
+                _sku = getSingleSkuMessages(key);
+                $('span.price-value').text(_sku.maxPrice > _sku.minPrice ? (_sku.minPrice + "-" + _sku.maxPrice) : _sku.maxPrice);
+                $('.stock > span').text(_sku.stock);
             }
 
             // 检查所有skuItem的状态是否可被点击
@@ -272,63 +247,63 @@
                 for (i = 0; i < keys.length; ++i) {
                     let checking = selected.slice();
                     for (j = 0; j < keys[i].length; ++j) {
-                        let item = keys[i][j];
-                        if (item === checking[i])
-                            continue;
-                        checking[i] = item;
-                        if (getStock(arrToStr(checking)) === 0) {
-                            changeSkuItemsStatus(item);
-                        }
+                        if (checking[i] === keys[i][j]) continue;
+                        checking[i] = keys[i][j];
+                        if (getSingleSkuMessages(checking.join(";")).stock === 0)
+                            changeSkuItemStatus(checking[i], true);
+                        else changeSkuItemStatus(checking[i], false);
                     }
                 }
+                changeStockAndPrice(selected);
             }
 
             // 改变相应skuItem的状态为不可点击
-            function changeSkuItemsStatus(symbol) {
-                $('[data-symbol = ' + symbol + ']')
-                    .removeClass('active')
-                    .addClass('disabled');
+            function changeSkuItemStatus(symbol, toDisabled) {
+                if (toDisabled)
+                    $('[data-symbol = ' + symbol + ']')
+                        .addClass('disabled');
+                else
+                    $('[data-symbol = ' + symbol + ']')
+                        .removeClass('disabled')
             }
 
-            // 复原skuItem状态
-            function resetSkuItemsStatus() {
-                $('label[data-symbol]').each(function () {
-                    $(this).hasClass('disabled') ? $(this).removeClass('disabled') : '';
-                });
-            }
+            // 获取特定SKU商品的库存以及价格
+            function getSingleSkuMessages(key) {
+                let single_sku = {
+                    stock: 0,
+                    maxPrice: -1.00,
+                    minPrice: Number.MAX_SAFE_INTEGER.toFixed(2)
+                };
 
-            // SKU商品筛选算法
-            function getStock(key) {
-                let result = 0,
-                    i, j, m,
+                let i, j, m,
                     items, n = [];
 
                 //检查是否已计算过
-                if (typeof myStock[key] !== 'undefined') {
-                    return myStock[key];
+                if (typeof myData[key] !== 'undefined') {
+                    return myData[key];
                 }
 
                 // 分割字符串
-                items = key.split(";").filter(function (item) {
-                    return item !== '';
-                });
+                items = key.split(";")
+                    .filter(function (item) {
+                        return item !== "";
+                    }).map(function (item) {
+                        return parseInt(item);
+                    });
 
                 //已选择数据是最小路径，直接从已端数据获取
                 if (items.length === keys.length) {
-                    if (sku_items[key]) {
-                        myPrice[key] = sku_items[key].price;
-                        myStock[key] = sku_items[key].stock;
-                        return sku_items[key].stock;
-                    } else
-                        return 0;
+                    if (sku_items.hasOwnProperty(key)) {
+                        single_sku.stock = sku_items[key].stock > 0 ? sku_items[key].stock : 0;
+                        single_sku.maxPrice = single_sku.minPrice = parseFloat(sku_items[key].price).toFixed(2);
+                    }
+                    return single_sku;
                 }
 
                 //拼接子串
-                for (i = 0; i < keys.length; i++) {
-                    for (j = 0; j < keys[i].length && items.length > 0; j++) {
-                        if (keys[i][j] == items[0]) {
-                            break;
-                        }
+                for (i = 0; i < keys.length; ++i) {
+                    for (j = 0; j < keys[i].length && items.length > 0; ++j) {
+                        if (keys[i][j] === items[0]) break;
                     }
 
                     if (j < keys[i].length && items.length > 0) {
@@ -336,17 +311,34 @@
                         n.push(items.shift());
                     } else {
                         //分解求值
-                        for (m = 0; m < keys[i].length; m++) {
-                            result += getStock(n.concat(keys[i][m], items).join(";"));
+                        for (m = 0; m < keys[i].length; ++m) {
+                            result = getSingleSkuMessages(n.concat(keys[i][m], items).join(";"));
+                            single_sku.stock += result.stock;
+                            if (result.maxPrice > single_sku.maxPrice) single_sku.maxPrice = result.maxPrice;
+                            if (result.minPrice < single_sku.minPrice) single_sku.minPrice = result.minPrice;
                         }
                         break;
                     }
                 }
 
                 //缓存
-                if (result !== 0)
-                    myStock[key] = result;
-                return result;
+                if (single_sku.stock !== 0) {
+                    myData[key] = single_sku;
+                    console.log(myData);
+                }
+                return single_sku;
+            }
+
+            // 初始化缓存，并更新skuBtn状态以及sku的库存和售价
+            function init() {
+                console.log("初始化SKU缓存数组以及库存和价格");
+                let initArray = [];
+                keys.forEach(function () {
+                    initArray.push("");
+                });
+                if (initArray.length === keys.length) {
+                    checkSkuItemsStatus(initArray);
+                }
             }
 
             // 运行初始化

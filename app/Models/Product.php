@@ -57,7 +57,8 @@ class Product extends Model
     // 获取该商品下由attr_value的symbol字段组成的数组
     public function getProductSymbols($returnType)
     {
-        $result = $this->attr_values->sortBy('attr_id')
+        $result = $this->attr_values()->orderBy('order')->get()
+            ->sortBy('attr_id')
             ->groupBy('attr_id')
             ->map(function ($item) {
                 return $item->pluck('symbol');

@@ -42,6 +42,9 @@ class CategoriesController extends Controller
     {
         $grid = new Grid(new Category);
 
+        // 自定义数据来源
+//        $grid->model();
+
         $grid->id('ID')->sortable();
         $grid->name('名称');
         $grid->is_directory('是否有子目录')->display(function ($value) {
@@ -64,7 +67,7 @@ class CategoriesController extends Controller
         $form->text('name', '类目名称')->rules('required');
 
         if ($isEditing) {
-            // 编辑模式
+            // 编辑模式不允许修改如下两项
             $form->display('is_directory', '是否有子类目')->with(function ($value) {
                 return $value ? '是' : '否';
             });

@@ -187,6 +187,10 @@ class OrdersController extends Controller
             throw new InvalidRequestException('该订单已经申请退款，请勿重复申请');
         }
 
+        if (Carbon::now()->diffInDays($order->paid_at) > 30) {
+            throw new InvalidRequestException('该订单距离支付日期已超过1个月，无法申请退款');
+        }
+
         $extra = $order->extra ?: [];
         $refund_count = array_key_exists('refund_count', $extra) ? $extra['refund_count'] : 0;
         $extra['refund_count'] = $refund_count + 1;

@@ -241,9 +241,13 @@
                             {reason: result.value})
                             .then(() => {
                                 swal('申请退款成功', '', 'success')
-                                    .then(() => {
-                                        location.reload();
-                                    });
+                                    .then(() => location.reload());
+                            })
+                            .catch((error) => {
+                                if (error.response) {
+                                    swal('退款失败', error.response.data.msg, 'error')
+                                        .then(() => location.reload());
+                                }
                             });
                     }
                 });

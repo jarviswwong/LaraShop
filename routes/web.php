@@ -41,10 +41,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('cart', 'CartController@index')->name('cart.index');
         Route::delete('cart/{productSku}', 'CartController@remove')->name('cart.remove');
 
-        // 订单路由
+        // 普通订单路由
         Route::post('orders', 'OrdersController@store')->name('orders.store');
         Route::get('orders', 'OrdersController@index')->name('orders.index');
         Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
+        // 秒杀订单路由
+        Route::post('seckill_orders', 'OrdersController@seckill')->name('seckill_orders.store');
         // 收货路由
         Route::post('orders/{order}/received', 'OrdersController@received')->name('orders.received');
         // 评价路由

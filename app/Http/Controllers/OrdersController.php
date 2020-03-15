@@ -8,10 +8,12 @@ use App\Exceptions\InvalidRequestException;
 use App\Http\Requests\Admin\HandleRefundRequest;
 use App\Http\Requests\ApplyRefundRequest;
 use App\Http\Requests\OrderRequest;
+use App\Http\Requests\SeckillOrderRequest;
 use App\Http\Requests\SendReviewRequest;
 use App\Models\CouponCode;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ProductSku;
 use App\Models\UserAddress;
 use App\Services\OrderService;
 use Carbon\Carbon;
@@ -44,6 +46,16 @@ class OrdersController extends Controller
         }
 
         return $this->orderService->store($user, $userAddress, $remark, $items, $coupon);
+    }
+
+    // 创建秒杀订单
+    public function seckill(SeckillOrderRequest $request)
+    {
+        $user = $request->user();
+        $address = UserAddress::find($request->input('address_id'));
+        $sku = ProductSku::find($request->input('sku_id'));
+
+        return $this->orderService->seckill($user, $address, $sku);
     }
 
     // 用户订单列表

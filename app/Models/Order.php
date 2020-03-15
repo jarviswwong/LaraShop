@@ -55,8 +55,10 @@ class Order extends Model
 {
     // 订单状态
     const TYPE_NORMAL = 'normal';
+    const TYPE_SECKILL = 'seckill';
     public static $typeMap = [
         self::TYPE_NORMAL => '普通商品订单',
+        self::TYPE_SECKILL => '秒杀商品订单',
     ];
     // 退款状态
     const REFUND_STATUS_PENDING = 'pending';  // 未申请退款

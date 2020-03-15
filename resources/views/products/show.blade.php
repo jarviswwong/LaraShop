@@ -61,7 +61,22 @@
                                 @else
                                     <button class="btn btn-success btn-favor">❤ 收藏</button>
                                 @endif
-                                <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
+                                @if($product->type === \App\Models\Product::TYPE_SECKILL)
+                                    @if(Auth::check())
+                                        @if($product->seckill->is_before_start)
+                                            <button class="btn btn-primary btn-seckill disabled countdown">抢购倒计时
+                                            </button>
+                                        @elseif($product->seckill->is_after_end)
+                                            <button class="btn btn-primary btn-seckill disabled">抢购已结束</button>
+                                        @else
+                                            <button class="btn btn-primary btn-seckill">立即抢购</button>
+                                        @endif
+                                    @else
+                                        <a class="btn btn-primary" href="{{ route('login') }}">请先登录</a>
+                                    @endif
+                                @elseif($product->type === \App\Models\Product::TYPE_NORMAL)
+                                    <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -113,6 +128,9 @@
 @endsection
 
 @section('scriptsAfterJs')
+    @if($product->type == \App\Models\Product::TYPE_SECKILL && $product->seckill->is_before_start)
+        <script src="https://cdn.bootcss.com/moment.js/2.22.1/moment.min.js"></script>
+    @endif
     <script>
         $(document).ready(function () {
             // myData用于缓存
@@ -176,6 +194,101 @@
                 } else {
                     swal('请选择您要的商品信息', '', 'info');
                 }
+            });
+
+            // 秒杀商品相关逻辑
+            // 如果是秒杀商品并且尚未开始秒杀
+            @if($product->type == \App\Models\Product::TYPE_SECKILL && $product->seckill->is_before_start)
+            // 将秒杀开始时间转成一个 moment 对象
+            var startTime = moment.unix({{ $product->seckill->start_at->getTimestamp() }});
+            // 设定一个定时器
+            var hdl = setInterval(function () {
+                // 获取当前时间
+                var now = moment();
+                // 如果当前时间晚于秒杀开始时间
+                if (now.isAfter(startTime)) {
+                    // 将秒杀按钮上的 disabled 类移除，修改按钮文字
+                    $('.btn-seckill').removeClass('disabled').removeClass('countdown').text('立即抢购');
+                    // 清除定时器
+                    clearInterval(hdl);
+                    return;
+                }
+
+                // 获取当前时间与秒杀开始时间相差的小时、分钟、秒数
+                var hourDiff = startTime.diff(now, 'hours');
+                var minDiff = startTime.diff(now, 'minutes') % 60;
+                var secDiff = startTime.diff(now, 'seconds') % 60;
+                // 修改按钮的文字
+                $('.btn-seckill').text('抢购倒计时 ' + hourDiff + ':' + minDiff + ':' + secDiff);
+            }, 500);
+            @endif
+
+            // 秒杀点击事件
+            $('.btn-seckill').click(function () {
+                // 如果秒杀按钮上有 disabled 类，则不做任何操作
+                if ($(this).hasClass('disabled')) {
+                    return;
+                }
+
+                let selectedStr = selected.join(";");
+
+                if (selected.length !== keys.length || !sku_items.hasOwnProperty(selectedStr)) {
+                    swal('请先选择商品信息', '', 'info');
+                    return;
+                }
+
+                // 把用户的收货地址以 JSON 的形式放入页面，赋值给 addresses 变量
+                let addresses = {!! json_encode(Auth::check() ? Auth::user()->addresses : []) !!};
+
+                // 使用 jQuery 动态创建一个下拉框
+                var addressSelector = $('<select class="form-control"></select>');
+                // 循环每个收货地址
+                addresses.forEach(function (address) {
+                    // 把当前收货地址添加到收货地址下拉框选项中
+                    addressSelector.append("<option value='" + address.id + "'>" + address.province + address.city + address.district + address.address +
+                        ' ' + address.contact_name + ' ' + address.contact_phone + '</option>');
+                });
+                swal({
+                    title: '选择收货地址',
+                    html: addressSelector,
+                    showCancelButton: true,
+                    confirmButtonText: '提交订单',
+                    cancelButtonText: '取消',
+                    reverseButtons: true
+                }).then( (result) => {
+                    if (result.value) {
+                        // 构造参数
+                        var req = {
+                            address_id: addressSelector.val(),
+                            sku_id: sku_items[selectedStr]['sku_id'],
+                        };
+                        console.log(req);
+                        // 秒杀接口调用
+                        axios.post('{{ route('seckill_orders.store') }}', req)
+                            .then(function (response) {
+                                swal('订单提交成功', '', 'success')
+                                    .then(() => {
+                                        location.href = '/orders/' + response.data.id;
+                                    });
+                            }, function (error) {
+                                // 输入参数校验失败，展示失败原因
+                                if (error.response.status === 422) {
+                                    var html = '<div>';
+                                    _.each(error.response.data.errors, function (errors) {
+                                        _.each(errors, function (error) {
+                                            html += error + '<br>';
+                                        })
+                                    });
+                                    html += '</div>';
+                                    swal({html: $(html)[0], type: 'error'})
+                                } else if (error.response.status === 403) {
+                                    swal(error.response.data.msg, '', 'error');
+                                } else {
+                                    swal('系统错误', '', 'error');
+                                }
+                            });
+                    }
+                });
             });
 
             // 收藏按钮点击事件
@@ -324,7 +437,7 @@
                 //缓存
                 if (single_sku.stock !== 0) {
                     myData[key] = single_sku;
-                    console.log(myData);
+                    // console.log(myData);
                 }
                 return single_sku;
             }

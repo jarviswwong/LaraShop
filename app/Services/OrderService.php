@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\CouponCodeUnavailableException;
 use App\Exceptions\InternalException;
+use App\Exceptions\InvalidRequestException;
 use App\Jobs\CloseOrder;
 use App\Models\CouponCode;
 use App\Models\Order;
@@ -99,6 +100,48 @@ class OrderService
         // 分发'订单过期'任务，延迟时间从配置文件中获取
         CloseOrder::dispatch($order)
             ->delay(config('app.order_ttl'));
+
+        return $order;
+    }
+
+    public function seckill(User $user, UserAddress $address, ProductSku $sku)
+    {
+        $order = \DB::transaction(function () use ($user, $address, $sku) {
+            // 更新此地址的最后使用时间
+            $address->update(['last_used_at' => Carbon::now()]);
+            // 扣减对应 SKU 库存
+            if ($sku->decreaseStock(1) <= 0) {
+                throw new InvalidRequestException('该商品库存不足');
+            }
+            // 创建一个订单
+            $order = new Order([
+                'address' => [ // 将地址信息放入订单中
+                    'full_address' => $address->full_address,
+                    'zip' => $address->zip,
+                    'contact_name' => $address->contact_name,
+                    'contact_phone' => $address->contact_phone,
+                ],
+                'remark' => '',
+                'total_amount' => $sku->price,
+                'type' => Order::TYPE_SECKILL,
+            ]);
+            // 订单关联到当前用户
+            $order->user()->associate($user);
+            // 写入数据库
+            $order->save();
+            // 创建一个新的订单项并与 SKU 关联
+            $item = $order->items()->make([
+                'amount' => 1, // 秒杀商品只能一份
+                'price' => $sku->price,
+            ]);
+            $item->product()->associate($sku->product_id);
+            $item->product_sku()->associate($sku);
+            $item->save();
+
+            return $order;
+        });
+        // 秒杀订单的自动关闭时间与普通订单不同
+        dispatch(new CloseOrder($order))->delay(config('app.seckill_order_ttl'));
 
         return $order;
     }

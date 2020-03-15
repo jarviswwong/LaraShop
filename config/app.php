@@ -231,4 +231,7 @@ return [
 
     //  订单过期延迟时间
     'order_ttl' => 300,
+
+    // 秒杀订单过期时间
+    'seckill_order_ttl' => 600,
 ];

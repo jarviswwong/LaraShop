@@ -43,6 +43,11 @@ use Illuminate\Support\Str;
  */
 class Product extends Model
 {
+    const TYPE_SECKILL = 'seckill';
+    public static $typeMap = [
+        self::TYPE_SECKILL => '秒杀商品',
+    ];
+
     protected $fillable = [
         'title', 'description', 'image', 'on_sale',
         'rating', 'sold_count', 'review_count', 'price'
@@ -115,6 +120,11 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function seckill()
+    {
+        return $this->hasOne(SeckillProduct::class);
     }
 
     // 获取图片的完整URL

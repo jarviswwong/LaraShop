@@ -46,6 +46,7 @@ class OrderService
                 ],
                 'remark' => $remark,
                 'total_amount' => 0,
+                'type' => Order::TYPE_NORMAL,
             ]);
 
             // 插入对应用户ID

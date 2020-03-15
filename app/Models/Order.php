@@ -53,6 +53,11 @@ use Ramsey\Uuid\Uuid;
  */
 class Order extends Model
 {
+    // 订单状态
+    const TYPE_NORMAL = 'normal';
+    public static $typeMap = [
+        self::TYPE_NORMAL => '普通商品订单',
+    ];
     // 退款状态
     const REFUND_STATUS_PENDING = 'pending';  // 未申请退款
     const REFUND_STATUS_APPLIED = 'applied';    // 已申请退款
@@ -93,6 +98,7 @@ class Order extends Model
         'ship_status',
         'ship_data',
         'extra',
+        'type',
     ];
 
     protected $casts = [

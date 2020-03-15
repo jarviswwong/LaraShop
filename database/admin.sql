@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.24, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: larashop
 -- ------------------------------------------------------
--- Server version	5.7.22-0ubuntu18.04.1
+-- Server version	5.7.24-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,7 @@
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,'2018-12-06 14:39:07'),(2,0,7,'系统管理','fa-tasks',NULL,NULL,'2019-01-15 20:10:33'),(3,2,8,' 管理员','fa-users','auth/users',NULL,'2019-01-15 20:10:33'),(4,2,9,'角色','fa-user','auth/roles',NULL,'2019-01-15 20:10:33'),(5,2,10,'权限','fa-ban','auth/permissions',NULL,'2019-01-15 20:10:33'),(6,2,11,'菜单','fa-bars','auth/menu',NULL,'2019-01-15 20:10:33'),(7,2,12,'操作日志','fa-history','auth/logs',NULL,'2019-01-15 20:10:33'),(8,0,2,'用户管理','fa-user','/users','2018-12-06 14:40:16','2018-12-06 14:40:21'),(9,0,4,'商品管理','fa-product-hunt','/products','2018-12-06 14:41:12','2019-01-15 20:10:33'),(10,0,5,'订单管理','fa-first-order','/orders','2018-12-06 14:41:43','2019-01-15 20:10:33'),(11,0,6,'优惠券管理','fa-credit-card-alt','/coupon_codes','2018-12-06 14:42:32','2019-01-15 20:10:33'),(12,0,3,'商品类目管理','fa-th-list','/categories','2019-01-15 20:10:17','2019-01-15 20:10:33');
+INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,'2018-12-06 14:39:07'),(2,0,9,'系统管理','fa-tasks',NULL,NULL,'2020-03-15 12:35:31'),(3,2,10,' 管理员','fa-users','auth/users',NULL,'2020-03-15 12:35:31'),(4,2,11,'角色','fa-user','auth/roles',NULL,'2020-03-15 12:35:31'),(5,2,12,'权限','fa-ban','auth/permissions',NULL,'2020-03-15 12:35:31'),(6,2,13,'菜单','fa-bars','auth/menu',NULL,'2020-03-15 12:35:31'),(7,2,14,'操作日志','fa-history','auth/logs',NULL,'2020-03-15 12:35:31'),(8,0,2,'用户管理','fa-user','/users','2018-12-06 14:40:16','2018-12-06 14:40:21'),(9,0,4,'商品管理','fa-product-hunt','/products','2018-12-06 14:41:12','2019-01-15 20:10:33'),(10,0,7,'订单管理','fa-first-order','/orders','2018-12-06 14:41:43','2020-03-15 12:35:31'),(11,0,8,'优惠券管理','fa-credit-card-alt','/coupon_codes','2018-12-06 14:42:32','2020-03-15 12:35:31'),(12,0,3,'商品类目管理','fa-th-list','/categories','2019-01-15 20:10:17','2019-01-15 20:10:33'),(13,9,6,'秒杀商品','fa-bolt','/seckill_products','2020-03-15 12:34:45','2020-03-15 12:35:31'),(14,9,5,'普通商品','fa-shopping-cart','/products','2020-03-15 12:35:24','2020-03-15 12:35:31');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -41,7 +41,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `admin_role_menu` WRITE;
 /*!40000 ALTER TABLE `admin_role_menu` DISABLE KEYS */;
-INSERT INTO `admin_role_menu` VALUES (1,2,NULL,NULL);
+INSERT INTO `admin_role_menu` VALUES (1,2,NULL,NULL),(1,13,NULL,NULL),(2,13,NULL,NULL),(1,14,NULL,NULL),(2,14,NULL,NULL);
 /*!40000 ALTER TABLE `admin_role_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,4 +103,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-01-15 12:53:05
+-- Dump completed on 2020-03-15 20:44:15

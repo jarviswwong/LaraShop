@@ -20,6 +20,13 @@ Route::group([
     $router->put('products/{id}', 'ProductsController@update');
     $router->delete('products/{id}', 'ProductsController@destroy');
 
+    // 秒杀商品
+    $router->get('seckill_products', 'SeckillProductsController@index');
+    $router->get('seckill_products/create', 'SeckillProductsController@create');
+    $router->post('seckill_products', 'SeckillProductsController@store');
+    $router->get('seckill_products/{id}/edit', 'SeckillProductsController@edit');
+    $router->put('seckill_products/{id}', 'SeckillProductsController@update');
+
     // 商品 SKU
     $router->get('product_skus/{product_id}', 'ProductSkusController@index')->name('admin.product_skus.index');
     $router->get('product_skus/{product_id}/create', 'ProductSkusController@create');

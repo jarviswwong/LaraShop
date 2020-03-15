@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         // 注入Alipay对象到容器中
         $this->app->singleton('alipay', function () {
             $config = config('pay.alipay');
-            $config['notify_url'] = 'https://en5ibzm6nxjj7.x.pipedream.net';
+            $config['notify_url'] = 'https://en1kz2h6y734m.x.pipedream.net';
             $config['return_url'] = route('payment.alipay.return');
             if (app()->environment() !== 'production') {
                 $config['mode'] = 'dev';
